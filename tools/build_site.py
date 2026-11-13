@@ -17,7 +17,7 @@ SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu891
 BASE = SITE_ROOT + 'kakurenbo/'
 SCHEDULE = '火・金・日の21時'  # 次スレの更新曜日・時刻（サイト全体に表示）
 # アクセス解析（Googleアナリティクス4）の測定ID。空なら解析タグを入れない
-GA_ID = ''
+GA_ID = 'G-6995F0CYV1'
 def ga_inject(path):
     if not GA_ID: return
     h = open(path, encoding='utf-8').read()
