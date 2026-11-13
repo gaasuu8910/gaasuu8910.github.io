@@ -113,6 +113,7 @@
   .chip.bk{background:#111;border-color:#111;color:#111;letter-spacing:2px;user-select:none}
   .lv.ex .chip:not(.bk){background:linear-gradient(90deg,#ffd84d,#ff9de2,#9fd8ff);border-color:#7a3dbd}
 </style>
+<!--GA-->
 </head>
 <body>
 <div class="wrap">
@@ -159,7 +160,7 @@
     </div>
   </div>
 
-  <div class="foot">※このスレッドはフィクションの謎解きゲームです。実在の動物園や飼育方法とは関係ありません。<br>制作：ガースー/MICHI（@gaasuuquestion）</div>
+  <div class="foot">※このスレッドはフィクションの謎解きゲームです。実在の動物園や飼育方法とは関係ありません。<br>制作：ガースー/MICHI（@gaasuuquestion）<!--GANOTE--></div>
 </div>
 
 <div class="dock">
@@ -203,7 +204,9 @@
   const LABEL = {"へび": "ヘビ", "ひょう": "ヒョウ", "ぞう": "ゾウ", "わに": "ワニ", "さい": "サイ", "ろば": "ロバ", "いるか": "イルカ", "かば": "カバ", "とら": "トラ", "わし": "ワシ", "ぱんだ": "パンダ", "くま": "クマ", "しまうま": "シマウマ", "らくだ": "ラクダ", "りす": "リス", "さる": "サル", "ばく": "バク", "かわうそ": "カワウソ", "ごりら": "ゴリラ", "しか": "シカ"};
   const NEAR = {"はしびろこう": "それは主役", "うま": "シマウマの一部やな", "ぱん": "おやつ", "りんご": "それは果物", "かめ": "カメ…はいないようだ", "てん": "テン…は渋すぎる", "きりん": "キリン…はいないようだ", "とき": "トキ…はいないようだ", "うし": "ウシ…はいないようだ", "だちょう": "ダチョウ…はいないようだ"};
   const LEVELS = {"へび": 1, "ひょう": 1, "しか": 1, "ぞう": 1, "わに": 3, "ろば": 3, "さい": 1, "ばく": 3, "かば": 1, "とら": 1, "わし": 1, "らくだ": 1, "ぱんだ": 2, "ごりら": 3, "しまうま": 2, "さる": 1, "いるか": 2, "くま": 1, "りす": 2};
-  const SPECIAL = {"かわうそ": "高難度の隠しに気づいたか。"};  // 高難度隠し: {key: 発見時の>>1のセリフ}
+  const SPECIAL = {"かわうそ": "高難度の隠しに気づいたか。"};
+  const T = (n,p={}) => { try { if (window.gtag) gtag('event', n, Object.assign({thread: location.pathname.split('/').filter(x=>x&&x!=='index.html').pop()||''}, p)); } catch(e){} };
+  const T0 = Date.now(); let tried = false;  // 高難度隠し: {key: 発見時の>>1のセリフ}
   function exEffect(k){
     const fx=document.createElement('div'); fx.className='exfx';
     const cols=['#ffe066','#ff9de2','#9fd8ff','#b98cff','#fff'];
@@ -256,6 +259,7 @@
     const raw = input.value.trim();
     if (!raw) return;
     input.value = '';
+    if (!tried){ tried = true; T('kk_first_submit', {sec: Math.round((Date.now()-T0)/1000)}); }
     const myNo = ++resNo;
     const words = raw.split(/[、,，\s\/／・]+/).map(norm).filter(Boolean);
     const lines = []; let lastNew = null; const newKeys = [];
@@ -263,9 +267,9 @@
       const k = alias[w];
       if (k){
         if (found.includes(k)) lines.push(`${LABEL[k]} → 既出`);
-        else { found.push(k); lastNew = k; newKeys.push(k); lines.push(SPECIAL[k] ? `<span class="rainbow">★ ${LABEL[k]} → ${SPECIAL[k]}</span>` : `<span class="ok">${LABEL[k]} → ${okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
-      } else if (NEAR[w]) lines.push(/ないようだ$/.test(NEAR[w]) ? NEAR[w] : `${esc(w)} → ${NEAR[w]}`);
-      else lines.push(`${esc(w)}…はいないようだ`);
+        else { found.push(k); lastNew = k; newKeys.push(k); T('kk_found', {word: k, level: SPECIAL[k] ? 'EX' : String(LEVELS[k]||1), count: found.length, sec: Math.round((Date.now()-T0)/1000)}); lines.push(SPECIAL[k] ? `<span class="rainbow">★ ${LABEL[k]} → ${SPECIAL[k]}</span>` : `<span class="ok">${LABEL[k]} → ${okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
+      } else if (NEAR[w]) { T('kk_near', {word: w.slice(0,20)}); lines.push(/ないようだ$/.test(NEAR[w]) ? NEAR[w] : `${esc(w)} → ${NEAR[w]}`); }
+      else { lines.push(`${esc(w)}…はいないようだ`); T('kk_miss', {word: w.slice(0,20)}); }
     }
     save();
     replyBox.hidden = false;
@@ -281,6 +285,7 @@
       const exNew = words.map(w=>alias[w]).find(k=>k && SPECIAL[k] && lines.length && found.includes(k) && k===newKeys.find(x=>x===k));
       if (exNew) exEffect(exNew);
       if (lastNew) document.querySelector(`.n[data-k="${lastNew}"]`).scrollIntoView({behavior:'smooth', block:'center'});
+      if (lastNew && found.length>=TOTAL) T('kk_clear', {sec: Math.round((Date.now()-T0)/1000)});
       if (lastNew && found.length>=TOTAL) setTimeout(()=>document.getElementById('clear').classList.add('on'), 1200);
       if (window.matchMedia('(pointer:fine)').matches) input.focus(); else input.blur();
     }, 500);
@@ -302,6 +307,11 @@
   document.getElementById('list-open').onclick=()=>{renderList();document.getElementById('list').classList.add('on');};
   document.getElementById('list-close').onclick=()=>document.getElementById('list').classList.remove('on');
   document.getElementById('list').onclick=e=>{ if(e.target.id==='list') e.currentTarget.classList.remove('on'); };
+  document.getElementById('share').addEventListener('click',()=>T('kk_share',{where:'dock', pct: pct(found.length)}));
+  document.getElementById('share2').addEventListener('click',()=>T('kk_share',{where:'clear', pct: pct(found.length)}));
+  document.querySelectorAll('a[href*="intent/follow"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow')));
+  document.getElementById('list-open').addEventListener('click',()=>T('kk_list_open',{pct: pct(found.length)}));
+  let left=false; document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden' && !left){ left=true; T('kk_leave',{pct: pct(found.length), sec: Math.round((Date.now()-T0)/1000), tried: tried?1:0}); } });
   paint(null);
 })();
 </script>

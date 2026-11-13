@@ -16,6 +16,16 @@ CUSTOM_DOMAIN = ''
 SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu8910.github.io/'
 BASE = SITE_ROOT + 'kakurenbo/'
 SCHEDULE = '火・金・日の21時'  # 次スレの更新曜日・時刻（サイト全体に表示）
+# アクセス解析（Googleアナリティクス4）の測定ID。空なら解析タグを入れない
+GA_ID = ''
+def ga_inject(path):
+    if not GA_ID: return
+    h = open(path, encoding='utf-8').read()
+    tag = (f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>'
+           f"<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>")
+    h = h.replace('<!--GA-->', tag, 1).replace('<!--GANOTE-->', '<br>※アクセス解析にGoogleアナリティクスを使っています（Cookieを使用）', 1)
+    if '</head>' in h and tag not in h: h = h.replace('</head>', tag + '\n</head>', 1)
+    open(path, 'w', encoding='utf-8').write(h)
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
 
 threads = json.load(open(os.path.join(REPO, 'threads.json'), encoding='utf-8'))
@@ -50,6 +60,7 @@ with sync_playwright() as pw:
         prog = pg.inner_text('#prog-text'); ok = prog.startswith(f"{len(sp['keys'])} / {len(sp['keys'])}") and pg.is_visible('#clear') and not errs
         print(('OK  ' if ok else 'FAIL'), t['slug'], prog, errs)
         if not ok: failed.append(t['slug'])
+        ga_inject(os.path.join(out, 'index.html'))
         rows.append((t['no'], t['slug'], sp['title'], sp['board'], sp['noun'], len(sp['keys']), t.get('date', '')))
     b.close()
 
@@ -86,6 +97,7 @@ a{{color:#00e}}
 <div class="foot">※各スレッドはフィクションの謎解きゲームです。<br>制作：ガースー/MICHI（<a href="https://x.com/gaasuuquestion">@gaasuuquestion</a>）</div>
 </div></body></html>'''
 open(os.path.join(DOCS, 'kakurenbo', 'index.html'), 'w', encoding='utf-8').write(index)
+ga_inject(os.path.join(DOCS, 'kakurenbo', 'index.html'))
 open(os.path.join(DOCS, 'index.html'), 'w', encoding='utf-8').write(
     '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=kakurenbo/">'
     '<title>HOWNEVER</title></head><body><a href="kakurenbo/">かくれんぼスレ</a> / <a href="https://shop.hownever.com/">STORE</a></body></html>')
