@@ -294,7 +294,7 @@
       const ks=Object.keys(KEYS).filter(k=> lv==='EX' ? SPECIAL[k] : (!SPECIAL[k] && (LEVELS[k]||1)===lv));
       if(!ks.length) continue;
       const got=ks.filter(k=>found.includes(k)).length;
-      h+=`<div class="lv ${lv==='EX'?'ex':''}"><h3><span>${name}</span><span>${got} / ${ks.length}</span></h3><div class="d">${desc}</div><div class="chips">`+
+      h+=`<div class="lv ${lv==='EX'?'ex':''}"><h3><span>${name}</span><span>${got} / ${ks.length}</span></h3><div class="chips">`+
         ks.map(k=> found.includes(k) ? `<span class="chip">${esc(LABEL[k])}</span>` : `<span class="chip bk">${'■'.repeat(Math.max(2,LABEL[k].length))}</span>`).join('')+`</div></div>`;
     }
     body.innerHTML=h;
