@@ -98,6 +98,20 @@
   body.shake .wrap{animation:exshake .5s}
   .rainbow{font-weight:bold;background:linear-gradient(90deg,#e40303,#ff8c00,#d4b000,#008026,#004dff,#750787,#e40303);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rbw 2.5s linear infinite}
   @keyframes rbw{to{background-position:200% center}}
+  .lbtn{font:inherit;font-size:12px;padding:4px 10px;border:1px solid #888;background:#fff;border-radius:3px;cursor:pointer;white-space:nowrap}
+  .list{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:55}
+  .list.on{display:flex}
+  .list .box{background:#fff;border:1px solid #999;max-width:440px;width:100%;max-height:82vh;overflow:auto;padding:14px 16px 18px}
+  .list .lh{display:flex;justify-content:space-between;align-items:center;font-size:17px}
+  .list .lh button{border:0;background:none;font-size:22px;cursor:pointer;line-height:1}
+  .list .lsub{font-size:12px;color:#666;margin:2px 0 10px}
+  .lv{margin:12px 0 0}
+  .lv h3{font-size:14px;margin:0 0 2px;display:flex;justify-content:space-between}
+  .lv .d{font-size:12px;color:#666;margin-bottom:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:14px;padding:3px 9px;border-radius:12px;background:#ffe14d;border:1px solid #e0b800}
+  .chip.bk{background:#111;border-color:#111;color:#111;letter-spacing:2px;user-select:none}
+  .lv.ex .chip:not(.bk){background:linear-gradient(90deg,#ffd84d,#ff9de2,#9fd8ff);border-color:#7a3dbd}
 </style>
 </head>
 <body>
@@ -151,7 +165,7 @@
 <div class="dock">
   <div class="dock-in">
     <div class="reply" id="reply" hidden></div>
-    <div class="prog"><span id="prog-text">0 / 20（0%）</span><div class="bar"><i id="prog-bar"></i></div><a class="xbtn" id="share" href="#" target="_blank" rel="noopener">Xに投稿</a></div>
+    <div class="prog"><span id="prog-text">0 / 20（0%）</span><div class="bar"><i id="prog-bar"></i></div><button type="button" class="lbtn" id="list-open">一覧</button><a class="xbtn" id="share" href="#" target="_blank" rel="noopener">Xに投稿</a></div>
     <div class="nextline">次スレは毎週 月・水・金・日の21時｜<a href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">フォローして見逃さない</a></div>
     <form id="f" autocomplete="off">
       <input type="text" id="msg" placeholder="見つけた動物を書き込む" enterkeyhint="send">
@@ -172,6 +186,14 @@
   </div>
 </div>
 
+<div class="list" id="list" role="dialog" aria-modal="true">
+  <div class="box">
+    <div class="lh"><b>隠れているもの一覧</b><button type="button" id="list-close" aria-label="閉じる">×</button></div>
+    <div class="lsub">見つけていないものは黒塗りになっています</div>
+    <div id="list-body"></div>
+  </div>
+</div>
+
 <script>
 (function(){
   const SHARE_URL = "https://gaasuu8910.github.io/kakurenbo/hashibirokou/";
@@ -180,6 +202,7 @@
   const TOTAL = Object.keys(KEYS).length;
   const LABEL = {"へび": "ヘビ", "ひょう": "ヒョウ", "ぞう": "ゾウ", "わに": "ワニ", "さい": "サイ", "ろば": "ロバ", "いるか": "イルカ", "かば": "カバ", "とら": "トラ", "わし": "ワシ", "ぱんだ": "パンダ", "くま": "クマ", "しまうま": "シマウマ", "らくだ": "ラクダ", "りす": "リス", "さる": "サル", "ばく": "バク", "かわうそ": "カワウソ", "ごりら": "ゴリラ", "しか": "シカ"};
   const NEAR = {"はしびろこう": "それは主役", "うま": "シマウマの一部やな", "ぱん": "おやつ", "りんご": "それは果物", "かめ": "カメ…はいないようだ", "てん": "テン…は渋すぎる", "きりん": "キリン…はいないようだ", "とき": "トキ…はいないようだ", "うし": "ウシ…はいないようだ", "だちょう": "ダチョウ…はいないようだ"};
+  const LEVELS = {"へび": 1, "ひょう": 1, "しか": 1, "ぞう": 1, "わに": 3, "ろば": 3, "さい": 1, "ばく": 3, "かば": 1, "とら": 1, "わし": 1, "らくだ": 1, "ぱんだ": 2, "ごりら": 3, "しまうま": 2, "さる": 1, "いるか": 2, "くま": 1, "りす": 2};
   const SPECIAL = {"かわうそ": "高難度の隠しに気づいたか。"};  // 高難度隠し: {key: 発見時の>>1のセリフ}
   function exEffect(k){
     const fx=document.createElement('div'); fx.className='exfx';
@@ -264,6 +287,21 @@
   });
 
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
+  const LVDEF=[[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる'],['EX','EX','ひとひねりある高難度隠し']];
+  function renderList(){
+    const body=document.getElementById('list-body'); let h='';
+    for (const [lv,name,desc] of LVDEF){
+      const ks=Object.keys(KEYS).filter(k=> lv==='EX' ? SPECIAL[k] : (!SPECIAL[k] && (LEVELS[k]||1)===lv));
+      if(!ks.length) continue;
+      const got=ks.filter(k=>found.includes(k)).length;
+      h+=`<div class="lv ${lv==='EX'?'ex':''}"><h3><span>${name}</span><span>${got} / ${ks.length}</span></h3><div class="d">${desc}</div><div class="chips">`+
+        ks.map(k=> found.includes(k) ? `<span class="chip">${esc(LABEL[k])}</span>` : `<span class="chip bk">${'■'.repeat(Math.max(2,LABEL[k].length))}</span>`).join('')+`</div></div>`;
+    }
+    body.innerHTML=h;
+  }
+  document.getElementById('list-open').onclick=()=>{renderList();document.getElementById('list').classList.add('on');};
+  document.getElementById('list-close').onclick=()=>document.getElementById('list').classList.remove('on');
+  document.getElementById('list').onclick=e=>{ if(e.target.id==='list') e.currentTarget.classList.remove('on'); };
   paint(null);
 })();
 </script>
