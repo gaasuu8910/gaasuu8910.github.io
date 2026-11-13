@@ -13,6 +13,11 @@ X：[@gaasuuquestion](https://x.com/gaasuuquestion)　タグ：#かくれんぼ�
 - `tools/` … 生成・検査ツール
 - `docs/` … 公開されるサイト（自動生成。GitHub Pages の公開元）
 
+## 作り方のルール
+- 隠す言葉は3文字以上を基本にする（2文字は隠しやすい分、芸術点が低い）。長い言葉ほどよい
+- 1スレに1つ「高難度隠し」を入れる（縦読み・IDのローマ字・漢字の中の漢字・斜め読みなど）。spec.json の special に `{"読み": "発見時の>>1のセリフ"}` を書くと、発見時に特別な演出が出る
+- >>1は日本語として自然な2ちゃんねるの書き込みであること（tools/checker_prompt.md で精査）
+
 ## 新しいスレを足す手順
 1. `threads/<slug>/` に `body.txt`・`spec.json`・`words.txt` を作る
 2. 読みの検査：`python3 tools/check_hidden.py threads/<slug>/body.txt threads/<slug>/words.txt`

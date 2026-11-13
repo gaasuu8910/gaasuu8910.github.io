@@ -81,6 +81,21 @@
   .clear .next{margin-top:8px;font-size:13px;color:#555}
   .nextline{font-size:12px;color:#555;margin:-2px 0 8px}
   .nextline a{color:#00e}
+  .exhint{font-size:13px;color:#7a3dbd}
+  .exhint b{color:#7a3dbd}
+  .n.found.ex{background:linear-gradient(90deg,#ffd84d,#ff9de2,#9fd8ff);box-shadow:0 0 0 2px #7a3dbd inset}
+  .exfx{position:fixed;inset:0;z-index:60;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .exfx .flash{position:absolute;inset:0;background:radial-gradient(circle,#fff6 0%,#7a3dbd88 60%,#0000 100%);animation:exflash 1.6s ease-out forwards}
+  .exfx .ban{position:relative;background:#1a0b2e;color:#ffe066;border:3px solid #ffe066;padding:16px 26px;text-align:center;font-weight:bold;box-shadow:0 0 30px #ffe066aa;animation:exban 2.4s cubic-bezier(.2,1.6,.4,1) forwards}
+  .exfx .ban .s{font-size:14px;letter-spacing:.3em;color:#d9b8ff}
+  .exfx .ban .t{font-size:30px;margin:4px 0}
+  .exfx .ban .w{font-size:16px;color:#fff}
+  .exfx i{position:absolute;top:-20px;width:9px;height:14px;opacity:.9;animation:exfall linear forwards}
+  @keyframes exflash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+  @keyframes exban{0%{transform:scale(.2) rotate(-8deg);opacity:0}25%{transform:scale(1.1) rotate(2deg);opacity:1}35%{transform:scale(1) rotate(0)}85%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+  @keyframes exfall{to{transform:translateY(110vh) rotate(720deg)}}
+  @keyframes exshake{0%,100%{transform:none}20%{transform:translate(-6px,3px)}40%{transform:translate(5px,-4px)}60%{transform:translate(-4px,-2px)}80%{transform:translate(3px,4px)}}
+  body.shake .wrap{animation:exshake .5s}
 </style>
 </head>
 <body>
@@ -88,7 +103,7 @@
   <div class="board">■ かくれんぼスレ ■ 回転寿司・グルメ板</div>
   <h1 id="title">【くら寿司のびっくらぽん、昔“当たりやすくなる裏技”ありませんでした？】</h1>
   <div class="info"><b id="rescount">4</b> コメント ／ <span id="found-info">隠れ寿司ネタ 0/20</span></div>
-  <div class="rule"><b>&gt;&gt;1のどこかに、寿司ネタが20個隠れています。</b><br>見つけたら下の欄からレスしよう。ひらがな・カタカナ・漢字OK、まとめて書いてもOK。</div>
+  <div class="rule"><b>&gt;&gt;1のどこかに、寿司ネタが20個隠れています。</b><br>見つけたら下の欄からレスしよう。ひらがな・カタカナ・漢字OK、まとめて書いてもOK。<br><span class="exhint">※うち1つは、ひとひねりある<b>「高難度隠し」</b></span></div>
 
   <div id="thread">
     <div class="post" id="r1">
@@ -168,7 +183,16 @@
   const TOTAL = Object.keys(KEYS).length;
   const LABEL = {"ぶり": "ブリ", "たこ": "タコ", "いわし": "イワシ", "えび": "海老", "いくら": "いくら", "にしん": "ニシン", "みるがい": "ミルガイ", "とろ": "トロ", "はまち": "ハマチ", "うなぎ": "鰻", "あじ": "アジ", "さんま": "サンマ", "まぐろ": "マグロ", "とびこ": "トビコ", "えんがわ": "エンガワ", "いか": "イカ", "たい": "タイ", "ほたて": "ホタテ", "うに": "ウニ", "たまご": "玉子"};
   const NEAR = {"かも": "鴨…は寿司ネタじゃない…よな？", "かに": "蟹…はいないようだ", "たらこ": "タラコ…はいないようだ", "蟹": "蟹…はいないようだ", "くら": "それは店の名前", "あなご": "アナゴ…はいないようだ", "すし": "それはジャンルｗ", "ねた": "うまいこと言うな", "しゃり": "シャリは隠してない", "がり": "ガリは隠してない"};
-  const SPECIAL = {"たまご": "…縦読みに気づいたか"};
+  const SPECIAL = {"たまご": "…縦読みに気づいたか"};  // 高難度隠し: {key: 発見時の>>1のセリフ}
+  function exEffect(k){
+    const fx=document.createElement('div'); fx.className='exfx';
+    const cols=['#ffe066','#ff9de2','#9fd8ff','#b98cff','#fff'];
+    let conf=''; for(let i=0;i<60;i++){conf+=`<i style="left:${Math.random()*100}%;background:${cols[i%5]};animation-duration:${1.4+Math.random()*1.4}s;animation-delay:${Math.random()*.4}s"></i>`;}
+    fx.innerHTML=`<div class="flash"></div>${conf}<div class="ban"><div class="s">★ 高難度隠し 発見 ★</div><div class="t">${LABEL[k]}</div><div class="w">${SPECIAL[k]}</div></div>`;
+    document.body.appendChild(fx); document.body.classList.add('shake');
+    setTimeout(()=>document.body.classList.remove('shake'),600);
+    setTimeout(()=>fx.remove(),3200);
+  }
   const OP_NAME = "名無しさん＠回転中", OP_ID = "Gs0suUq1";
   const norm = s => s.normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0)-0x60)).replace(/[\sー〜～・!！?？。.]/g,'');
   const alias = {};
@@ -188,6 +212,7 @@
       if (found.includes(k)) {
         sp.classList.add('found');
         if (!sp.querySelector('.tag')) { const t=document.createElement('span'); t.className='tag'; t.textContent=LABEL[k]; sp.appendChild(t); }
+        if (SPECIAL[k]) sp.classList.add('ex');
         if (k===flashKey){ sp.classList.remove('flash'); void sp.offsetWidth; sp.classList.add('flash'); }
       }
     });
@@ -214,12 +239,12 @@
     input.value = '';
     const myNo = ++resNo;
     const words = raw.split(/[、,，\s\/／・]+/).map(norm).filter(Boolean);
-    const lines = []; let lastNew = null;
+    const lines = []; let lastNew = null; const newKeys = [];
     for (const w of words){
       const k = alias[w];
       if (k){
         if (found.includes(k)) lines.push(`${LABEL[k]} → 既出`);
-        else { found.push(k); lastNew = k; lines.push(`<span class="ok">${LABEL[k]} → ${SPECIAL[k]||okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
+        else { found.push(k); lastNew = k; newKeys.push(k); lines.push(`<span class="ok">${LABEL[k]} → ${SPECIAL[k]||okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
       } else if (NEAR[w]) lines.push(`${esc(w)} → ${NEAR[w]}`);
       else lines.push(`${esc(w)} → ないです`);
     }
@@ -234,6 +259,8 @@
       else if (lastNew) html += `<br>（残り ${TOTAL-found.length}）`;
       replyBox.innerHTML += `<div class="head" style="margin-top:4px">${opNo} 名前：<span class="nm">${OP_NAME}</span> ID:${OP_ID}（&gt;&gt;1）</div><div><span class="anc">&gt;&gt;${myNo}</span><br>${html}</div>`;
       paint(lastNew);
+      const exNew = words.map(w=>alias[w]).find(k=>k && SPECIAL[k] && lines.length && found.includes(k) && k===newKeys.find(x=>x===k));
+      if (exNew) exEffect(exNew);
       if (lastNew) document.querySelector(`.n[data-k="${lastNew}"]`).scrollIntoView({behavior:'smooth', block:'center'});
       if (lastNew && found.length>=TOTAL) setTimeout(()=>document.getElementById('clear').classList.add('on'), 1200);
       if (window.matchMedia('(pointer:fine)').matches) input.focus(); else input.blur();
