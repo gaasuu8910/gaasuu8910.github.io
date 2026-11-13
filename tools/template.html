@@ -130,7 +130,7 @@
   <div class="box">
     <div class="k">■ かくれんぼスレ</div>
     <h2>全{{TOTAL}}個 クリア！</h2>
-    <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です。<br>次スレは{{NEXT}}に立てるから、また来てくれ」</div>
+    <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です。<br>スレは毎週{{NEXT}}に立てるから、アカウントをフォローしてまた来てくれ」</div>
     <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xで引用して自慢する</a>
     <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る（@gaasuuquestionをフォロー）</a>
     <div class="next">次スレは毎週 {{NEXT}} に立ちます</div>
@@ -217,7 +217,7 @@
       const opNo = ++resNo;
       document.getElementById('rescount').textContent = resNo;
       let html = lines.join('<br>');
-      if (lastNew && found.length>=TOTAL) html += `<br><span class="ok">全部見つかった…だと…？ 完敗です。</span><br>次スレは{{NEXT}}に立てるから、また来てくれ`;
+      if (lastNew && found.length>=TOTAL) html += `<br><span class="ok">全部見つかった…だと…？ 完敗です。</span><br>スレは毎週{{NEXT}}に立てるから、アカウントをフォローしてまた来てくれ`;
       else if (lastNew) html += `<br>（残り ${TOTAL-found.length}）`;
       replyBox.innerHTML += `<div class="head" style="margin-top:4px">${opNo} 名前：<span class="nm">${OP_NAME}</span> ID:${OP_ID}（&gt;&gt;1）</div><div><span class="anc">&gt;&gt;${myNo}</span><br>${html}</div>`;
       paint(lastNew);
