@@ -49,7 +49,7 @@ def main():
         'TITLE': html.escape(sp['title']), 'BOARD': html.escape(sp['board']), 'NOUN': html.escape(sp['noun']),
         'TOTAL': str(len(keys)), 'RESCOUNT': str(1 + len(sp.get('replies', []))), 'THREAD': '\n'.join(posts),
         'FOOT': html.escape(sp['foot']), 'SHARE_URL': js(sp.get('share_url', '')), 'QUOTE_URL': js(sp.get('quote_url', '')), 'NEXT': html.escape(sp.get('next_schedule', '月・金の21時')), 'KEYS': js(keys),
-        'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
+        'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'MISS': sp.get('miss_verb', 'ない'), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
         'OP_ID_JS': js(sp['op_id']), 'STORE': js(sp['store']),
     }
     for k, v in rep.items():

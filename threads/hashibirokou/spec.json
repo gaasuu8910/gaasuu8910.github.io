@@ -145,8 +145,9 @@
  "share_url": "https://gaasuu8910.github.io/kakurenbo/hashibirokou/",
  "op_id_key": "かわうそ",
  "special": {
-  "かわうそ": "…IDに気づいたか"
+  "かわうそ": "高難度の隠しに気づいたか。"
  },
  "page_url": "https://gaasuu8910.github.io/kakurenbo/hashibirokou/",
- "next_schedule": "月・水・金・日の21時"
+ "next_schedule": "月・水・金・日の21時",
+ "miss_verb": "いない"
 }

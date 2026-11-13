@@ -207,8 +207,8 @@
       if (k){
         if (found.includes(k)) lines.push(`${LABEL[k]} → 既出`);
         else { found.push(k); lastNew = k; newKeys.push(k); lines.push(SPECIAL[k] ? `<span class="rainbow">★ ${LABEL[k]} → ${SPECIAL[k]}</span>` : `<span class="ok">${LABEL[k]} → ${okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
-      } else if (NEAR[w]) lines.push(/いないようだ$/.test(NEAR[w]) ? NEAR[w] : `${esc(w)} → ${NEAR[w]}`);
-      else lines.push(`${esc(w)}…はいないようだ`);
+      } else if (NEAR[w]) lines.push(/ないようだ$/.test(NEAR[w]) ? NEAR[w] : `${esc(w)} → ${NEAR[w]}`);
+      else lines.push(`${esc(w)}…は{{MISS}}ようだ`);
     }
     save();
     replyBox.hidden = false;
