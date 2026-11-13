@@ -96,6 +96,8 @@
   @keyframes exfall{to{transform:translateY(110vh) rotate(720deg)}}
   @keyframes exshake{0%,100%{transform:none}20%{transform:translate(-6px,3px)}40%{transform:translate(5px,-4px)}60%{transform:translate(-4px,-2px)}80%{transform:translate(3px,4px)}}
   body.shake .wrap{animation:exshake .5s}
+  .rainbow{font-weight:bold;background:linear-gradient(90deg,#e40303,#ff8c00,#d4b000,#008026,#004dff,#750787,#e40303);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rbw 2.5s linear infinite}
+  @keyframes rbw{to{background-position:200% center}}
 </style>
 </head>
 <body>
@@ -149,9 +151,8 @@
     const fx=document.createElement('div'); fx.className='exfx';
     const cols=['#ffe066','#ff9de2','#9fd8ff','#b98cff','#fff'];
     let conf=''; for(let i=0;i<60;i++){conf+=`<i style="left:${Math.random()*100}%;background:${cols[i%5]};animation-duration:${1.4+Math.random()*1.4}s;animation-delay:${Math.random()*.4}s"></i>`;}
-    fx.innerHTML=`<div class="flash"></div>${conf}<div class="ban"><div class="s">★ 高難度隠し 発見 ★</div><div class="t">${LABEL[k]}</div><div class="w">${SPECIAL[k]}</div></div>`;
-    document.body.appendChild(fx); document.body.classList.add('shake');
-    setTimeout(()=>document.body.classList.remove('shake'),600);
+    fx.innerHTML=conf;
+    document.body.appendChild(fx);
     setTimeout(()=>fx.remove(),3200);
   }
   const OP_NAME = {{OP_NAME_JS}}, OP_ID = {{OP_ID_JS}};
@@ -205,7 +206,7 @@
       const k = alias[w];
       if (k){
         if (found.includes(k)) lines.push(`${LABEL[k]} → 既出`);
-        else { found.push(k); lastNew = k; newKeys.push(k); lines.push(`<span class="ok">${LABEL[k]} → ${SPECIAL[k]||okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
+        else { found.push(k); lastNew = k; newKeys.push(k); lines.push(SPECIAL[k] ? `<span class="rainbow">★ ${LABEL[k]} → ${SPECIAL[k]}</span>` : `<span class="ok">${LABEL[k]} → ${okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
       } else if (NEAR[w]) lines.push(`${esc(w)} → ${NEAR[w]}`);
       else lines.push(`${esc(w)} → ないです`);
     }
