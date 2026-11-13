@@ -15,6 +15,7 @@ DOCS = os.path.join(REPO, 'docs')
 CUSTOM_DOMAIN = ''
 SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu8910.github.io/'
 BASE = SITE_ROOT + 'kakurenbo/'
+SCHEDULE = '月・金の21時'  # 次スレの更新曜日・時刻（サイト全体に表示）
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
 
 threads = json.load(open(os.path.join(REPO, 'threads.json'), encoding='utf-8'))
@@ -32,6 +33,7 @@ with sync_playwright() as pw:
         url = BASE + t['slug'] + '/'
         sp['page_url'] = url
         sp['share_url'] = url
+        sp['next_schedule'] = SCHEDULE
         json.dump(sp, open(sp_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
         out = os.path.join(DOCS, 'kakurenbo', t['slug'])
         subprocess.run([sys.executable, os.path.join(TOOLS, 'gen.py'), sp_path, out], check=True)
@@ -77,7 +79,7 @@ a{{color:#00e}}
 </style></head><body><div class="w">
 <div class="lead">■ かくれんぼスレ ■ 過去ログ一覧</div>
 <h1>かくれんぼスレ</h1>
-<div class="lead">{desc}</div>
+<div class="lead">{desc}<br>毎週 {SCHEDULE} 更新｜<a href="https://x.com/intent/follow?screen_name=gaasuuquestion">@gaasuuquestion をフォロー</a></div>
 <ul>
 {items}
 </ul>
