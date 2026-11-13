@@ -1,4 +1,4 @@
-# かくれんぼスレ（gaasuu8910.github.io/hownever.game/kakurenbo/（独自ドメイン準備中。将来 hownever.com/kakurenbo/））
+# かくれんぼスレ（gaasuu8910.github.io/kakurenbo/（独自ドメイン準備中。将来 hownever.com/kakurenbo/））
 
 2ちゃんねる風の書き込みに、あるジャンルの言葉が20個かくれている謎解きシリーズ。
 X：[@gaasuuquestion](https://x.com/gaasuuquestion)　タグ：#かくれんぼスレ

@@ -13,7 +13,7 @@ TOOLS = os.path.join(REPO, 'tools')
 DOCS = os.path.join(REPO, 'docs')
 # 独自ドメインを使うときは CUSTOM_DOMAIN = 'hownever.com' にする（CNAMEが出力され、URLも切り替わる）
 CUSTOM_DOMAIN = ''
-SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu8910.github.io/hownever.game/'
+SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu8910.github.io/'
 BASE = SITE_ROOT + 'kakurenbo/'
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
 
