@@ -15,7 +15,7 @@ DOCS = os.path.join(REPO, 'docs')
 CUSTOM_DOMAIN = ''
 SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu8910.github.io/'
 BASE = SITE_ROOT + 'kakurenbo/'
-SCHEDULE = '月・水・金・日の21時'  # 2027年1月から '月・水・金の21時' に変更予定  # 次スレの更新曜日・時刻（サイト全体に表示）
+SCHEDULE = '火・金・日の21時'  # 次スレの更新曜日・時刻（サイト全体に表示）
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
 
 threads = json.load(open(os.path.join(REPO, 'threads.json'), encoding='utf-8'))
