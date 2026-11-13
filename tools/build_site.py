@@ -15,7 +15,7 @@ DOCS = os.path.join(REPO, 'docs')
 CUSTOM_DOMAIN = ''
 SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu8910.github.io/'
 BASE = SITE_ROOT + 'kakurenbo/'
-SCHEDULE = '月・金の21時'  # 次スレの更新曜日・時刻（サイト全体に表示）
+SCHEDULE = '月・水・金・日の21時'  # 2027年1月から '月・水・金の21時' に変更予定  # 次スレの更新曜日・時刻（サイト全体に表示）
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
 
 threads = json.load(open(os.path.join(REPO, 'threads.json'), encoding='utf-8'))
@@ -55,7 +55,7 @@ with sync_playwright() as pw:
 
 rows.sort(key=lambda r: -r[0])
 items = '\n'.join(
-    f'<li><span class="no">#{n}</span> <a href="./{s}/">{html.escape(title)}</a><div class="meta">{html.escape(board)}／{html.escape(noun)}が{k}個／{d}</div></li>'
+    f'<li><span class="no">{html.escape(noun)}</span> <a href="./{s}/">{html.escape(title)}</a><div class="meta">{html.escape(board)}／{html.escape(noun)}が{k}個かくれている／{d}</div></li>'
     for n, s, title, board, noun, k, d in rows)
 desc = '2ちゃんねる風の書き込みに、言葉が20個かくれている。何%見つけられる？'
 index = f'''<!DOCTYPE html>
@@ -77,7 +77,7 @@ a{{color:#00e}}
 .meta{{font-size:12px;color:#666;margin-top:2px}}
 .foot{{margin-top:28px;font-size:12px;color:#666}}
 </style></head><body><div class="w">
-<div class="lead">■ かくれんぼスレ ■ 過去ログ一覧</div>
+<div class="lead">■ かくれんぼスレ ■ 過去ログ一覧（どれからでも遊べます）</div>
 <h1>かくれんぼスレ</h1>
 <div class="lead">{desc}<br>毎週 {SCHEDULE} 更新｜<a href="https://x.com/intent/follow?screen_name=gaasuuquestion">@gaasuuquestion をフォロー</a></div>
 <ul>
