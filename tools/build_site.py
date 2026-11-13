@@ -11,7 +11,10 @@ from playwright.sync_api import sync_playwright
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = os.path.join(REPO, 'tools')
 DOCS = os.path.join(REPO, 'docs')
-BASE = 'https://hownever.com/kakurenbo/'
+# 独自ドメインを使うときは CUSTOM_DOMAIN = 'hownever.com' にする（CNAMEが出力され、URLも切り替わる）
+CUSTOM_DOMAIN = ''
+SITE_ROOT = f'https://{CUSTOM_DOMAIN}/' if CUSTOM_DOMAIN else 'https://gaasuu8910.github.io/hownever.game/'
+BASE = SITE_ROOT + 'kakurenbo/'
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
 
 threads = json.load(open(os.path.join(REPO, 'threads.json'), encoding='utf-8'))
@@ -82,9 +85,10 @@ a{{color:#00e}}
 </div></body></html>'''
 open(os.path.join(DOCS, 'kakurenbo', 'index.html'), 'w', encoding='utf-8').write(index)
 open(os.path.join(DOCS, 'index.html'), 'w', encoding='utf-8').write(
-    '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=/kakurenbo/">'
-    '<title>HOWNEVER</title></head><body><a href="/kakurenbo/">かくれんぼスレ</a> / <a href="https://shop.hownever.com/">STORE</a></body></html>')
-open(os.path.join(DOCS, 'CNAME'), 'w').write('hownever.com\n')
+    '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=kakurenbo/">'
+    '<title>HOWNEVER</title></head><body><a href="kakurenbo/">かくれんぼスレ</a> / <a href="https://shop.hownever.com/">STORE</a></body></html>')
+if CUSTOM_DOMAIN:
+    open(os.path.join(DOCS, 'CNAME'), 'w').write(CUSTOM_DOMAIN + '\n')
 open(os.path.join(DOCS, '.nojekyll'), 'w').write('')
 print('site built:', [r[1] for r in rows])
 if failed:
