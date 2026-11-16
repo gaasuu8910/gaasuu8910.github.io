@@ -258,7 +258,7 @@
     setTimeout(()=>fx.remove(),3200);
   }
   const OP_NAME = "名無しさん＠園内", OP_ID = "kAWAuSo9";
-  const TWIST = null;
+  const TWIST = {"posts": [{"name": "名無しさん＠園内", "id": "Pv8dKs3n", "text": "ちょっと待て。\nアイツにしか興味がないって言いながら、>>1の書き込み、動物が20匹かくれてるよな？\n**こいつ、ハシビロコウ待ってる間、ほかの動物ぜんぶ見てるじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n閉園まで粘ると、さすがに暇なんだよ。"}]};
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
   let AC=null; const ac=()=>{ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; };
   function beep(f,d=0.08,type='square',vol=0.06,delay=0){ const a=ac(); if(!a) return; try{ const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,a.currentTime+delay); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+delay+d); o.connect(g).connect(a.destination); o.start(a.currentTime+delay); o.stop(a.currentTime+delay+d+0.02);}catch(e){} }
