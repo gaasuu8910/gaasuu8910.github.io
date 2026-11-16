@@ -245,6 +245,7 @@
     await sleep(1100); dim.remove();
     const posts=twistPostsHTML(resNo); resNo+=posts.length;
     for(const [no,h] of posts){ const d=addTwistPost(no,h,true); d.scrollIntoView({behavior:'smooth',block:'center'}); shake(); beep(196,0.25,'square',0.07); vib([40,60,40]); await sleep(2600); }
+    if(!TWIST.effect){ fanfare(); confetti(140); vib([60,40,120]); T('kk_twist',{step:'end'}); await sleep(1800); document.getElementById('clear').classList.add('on'); return; }
     const E=TWIST.effect||{}; const ov=document.createElement('div'); ov.className='tw'; if(E.bg) ov.style.background=E.bg;
     ov.innerHTML=`<button class="twskip" type="button">スキップ</button><h2>${esc(E.title||'答え合わせ')}</h2><div class="cnt"><span id="twn">0</span><small>${esc(E.unit||'')}</small></div><div class="lane" id="twlane"></div><div id="twrec"></div><div class="gacha" id="twg"></div><div class="twmsg" id="twmsg"></div><button class="twbtn" type="button">スレに戻る</button>`;
     document.body.appendChild(ov);

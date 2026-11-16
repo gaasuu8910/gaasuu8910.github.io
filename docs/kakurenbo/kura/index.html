@@ -263,7 +263,7 @@
     setTimeout(()=>fx.remove(),3200);
   }
   const OP_NAME = "名無しさん＠回転中", OP_ID = "Gs0suUq1";
-  const TWIST = {"posts": [{"name": "名無しさん＠回転中", "id": "Rk3mQp7x", "text": "ちょっと待て。\n>>1が書いた寿司ネタ、全部で20個だよな？\nびっくらぽんって、5皿で1回だろ。\n……**こいつ、裏技書くフリして、今日食べた皿を報告してるだけじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n20皿で、4回まわした。\n裏技はない。**食べた分だけ当たる。それだけだ。**"}], "effect": {"title": "本日のお皿", "unit": "皿", "receipt": "お会計　20皿", "gacha": 4, "win": 3, "win_text": "当たり！"}};
+  const TWIST = {"posts": [{"name": "名無しさん＠回転中", "id": "Rk3mQp7x", "text": "ちょっと待て。\n>>1が書いた寿司ネタ、全部で20個だよな？\nびっくらぽんって、5皿で1回だろ。\n……**こいつ、裏技書くフリして、今日食べた皿を報告してるだけじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n20皿で、4回まわした。\n裏技はない。**食べた分だけ当たる。それだけだ。**"}]};
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
   let AC=null; const ac=()=>{ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; };
   function beep(f,d=0.08,type='square',vol=0.06,delay=0){ const a=ac(); if(!a) return; try{ const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,a.currentTime+delay); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+delay+d); o.connect(g).connect(a.destination); o.start(a.currentTime+delay); o.stop(a.currentTime+delay+d+0.02);}catch(e){} }
@@ -284,6 +284,7 @@
     await sleep(1100); dim.remove();
     const posts=twistPostsHTML(resNo); resNo+=posts.length;
     for(const [no,h] of posts){ const d=addTwistPost(no,h,true); d.scrollIntoView({behavior:'smooth',block:'center'}); shake(); beep(196,0.25,'square',0.07); vib([40,60,40]); await sleep(2600); }
+    if(!TWIST.effect){ fanfare(); confetti(140); vib([60,40,120]); T('kk_twist',{step:'end'}); await sleep(1800); document.getElementById('clear').classList.add('on'); return; }
     const E=TWIST.effect||{}; const ov=document.createElement('div'); ov.className='tw'; if(E.bg) ov.style.background=E.bg;
     ov.innerHTML=`<button class="twskip" type="button">スキップ</button><h2>${esc(E.title||'答え合わせ')}</h2><div class="cnt"><span id="twn">0</span><small>${esc(E.unit||'')}</small></div><div class="lane" id="twlane"></div><div id="twrec"></div><div class="gacha" id="twg"></div><div class="twmsg" id="twmsg"></div><button class="twbtn" type="button">スレに戻る</button>`;
     document.body.appendChild(ov);
