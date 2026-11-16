@@ -61,6 +61,9 @@
   .post-btn:hover{background:#e00000}
   .post-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #8a0000}
   .xbtn{font-size:12px;padding:4px 10px;background:#000;color:#fff;text-decoration:none;border-radius:3px;white-space:nowrap}
+  .xbtn.hot{background:#d22;animation:hot 1.2s ease-in-out infinite}
+  @keyframes hot{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  .sharenow{display:inline-block;margin-top:4px;background:#000;color:#fff;font-weight:bold;padding:5px 12px;border-radius:4px;text-decoration:none}
   .wrap{padding-bottom:200px}
   .rule{margin:0 0 6px;padding:8px 12px;border:1px solid #c9c9c9;background:#fff;font-size:14px;line-height:1.7}
   .rule b{color:var(--title)}
@@ -208,7 +211,10 @@
     document.getElementById('prog-text').textContent = `${n} / ${TOTAL}（${pct(n)}%）`;
     document.getElementById('prog-bar').style.width = pct(n)+'%';
     document.getElementById('found-info').textContent = `隠れ{{NOUN}} ${n}/${TOTAL}`;
-    const text = `投稿文に隠された{{NOUN}}を${pct(n)}%見つけた。\n#かくれんぼスレ`;
+    const text = n>=TOTAL ? `投稿文に隠された{{NOUN}}を、${TOTAL}個ぜんぶ見つけた。\n#かくれんぼスレ`
+      : n===0 ? `投稿文に{{NOUN}}が${TOTAL}個かくれているらしい。\n#かくれんぼスレ`
+      : `投稿文に隠された{{NOUN}}、${n}/${TOTAL}まで見つけた。\nあと${TOTAL-n}個がどうしても見つからない…\n#かくれんぼスレ`;
+    document.getElementById('share').classList.toggle('hot', n>=Math.ceil(TOTAL*0.8) && n<TOTAL);
     const p = new URLSearchParams({text});
     const u = QUOTE_URL || SHARE_URL;
     if (u) p.set('url', u);
@@ -245,9 +251,15 @@
       document.getElementById('rescount').textContent = resNo;
       let html = lines.join('<br>');
       if (lastNew && found.length>=TOTAL) html += `<br><span class="ok">全部見つかった…だと…？ 完敗です。</span><br>スレは毎週{{NEXT}}に立てるから、アカウントをフォローしてまた来てくれ`;
-      else if (lastNew) html += `<br>（残り ${TOTAL-found.length}）`;
+      else if (lastNew) {
+        html += `<br>（残り ${TOTAL-found.length}）`;
+        const th=Math.ceil(TOTAL*0.8), hk={{STORE}}+'-hot';
+        let shown=false; try{shown=localStorage.getItem(hk)==='1'}catch(e){}
+        if (found.length>=th && !shown){ html += `<br>ここまで来たら、あと少し。<br><a class="sharenow" target="_blank" rel="noopener" href="#">ここまでの結果をXに投稿する</a>`; try{localStorage.setItem(hk,'1')}catch(e){} }
+      }
       replyBox.innerHTML += `<div class="head" style="margin-top:4px">${opNo} 名前：<span class="nm">${OP_NAME}</span> ID:${OP_ID}（&gt;&gt;1）</div><div><span class="anc">&gt;&gt;${myNo}</span><br>${html}</div>`;
       paint(lastNew);
+      replyBox.querySelectorAll('.sharenow').forEach(a=>{a.href=document.getElementById('share').href; a.addEventListener('click',()=>T('kk_share',{where:'reply', pct: pct(found.length)}));});
       const exNew = words.map(w=>alias[w]).find(k=>k && SPECIAL[k] && lines.length && found.includes(k) && k===newKeys.find(x=>x===k));
       if (exNew) exEffect(exNew);
       if (lastNew) document.querySelector(`.n[data-k="${lastNew}"]`).scrollIntoView({behavior:'smooth', block:'center'});
