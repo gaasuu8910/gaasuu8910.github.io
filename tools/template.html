@@ -137,6 +137,7 @@
   .lane{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:520px;min-height:150px;align-content:flex-start}
   .plate{width:62px;height:62px;border-radius:50%;background:radial-gradient(circle,#fff 52%,#d33 54%,#d33 60%,#fff 62%);color:#222;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;text-align:center;line-height:1.1;box-shadow:0 4px 0 rgba(0,0,0,.35);animation:slidein .35s cubic-bezier(.2,1.6,.4,1)}
   @keyframes slidein{0%{transform:translateX(-160px) rotate(-90deg);opacity:0}100%{transform:none;opacity:1}}
+  .plate.sign{width:auto;min-width:56px;height:36px;border-radius:4px;padding:0 10px;background:#fff;border-top:7px solid #1b8f4a;box-shadow:0 3px 0 rgba(0,0,0,.35);font-size:14px}
   .receipt{margin-top:14px;background:#fffdf5;color:#222;font-family:monospace;padding:10px 18px;border-radius:4px;font-size:20px;font-weight:bold;box-shadow:0 6px 0 rgba(0,0,0,.4);animation:stamp .5s cubic-bezier(.2,1.8,.4,1)}
   @keyframes stamp{0%{transform:scale(3) rotate(-8deg);opacity:0}100%{transform:none;opacity:1}}
   .gacha{display:flex;gap:14px;margin-top:20px}
@@ -146,7 +147,7 @@
   .cap.lose{filter:grayscale(1) brightness(.6)}
   .cap.win{background:radial-gradient(circle,#fff6b0,#ffb800);box-shadow:0 0 30px 10px rgba(255,210,60,.9);animation:winpop .6s cubic-bezier(.2,1.8,.4,1)}
   @keyframes winpop{0%{transform:scale(.3)}100%{transform:scale(1.25)}}
-  .atari{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);font-size:68px;font-weight:900;color:#ffd84d;-webkit-text-stroke:3px #b30000;text-shadow:0 0 30px #ff0;z-index:80;animation:exban 2.2s forwards;white-space:nowrap}
+  .atari{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);font-size:clamp(34px,13vw,68px);font-weight:900;color:#ffd84d;-webkit-text-stroke:3px #b30000;text-shadow:0 0 30px #ff0;z-index:80;animation:exban 2.2s forwards;white-space:nowrap}
   .flashw{position:fixed;inset:0;background:#fff;z-index:75;animation:exflash .6s forwards;pointer-events:none}
   .twmsg{margin-top:16px;font-size:16px;text-align:center;line-height:1.7;min-height:54px}
   .twbtn{margin-top:auto;background:#ffd84d;color:#3a1d0e;border:0;border-radius:24px;padding:12px 28px;font-size:17px;font-weight:bold;opacity:0;transition:opacity .4s}
@@ -244,21 +245,21 @@
     await sleep(1100); dim.remove();
     const posts=twistPostsHTML(resNo); resNo+=posts.length;
     for(const [no,h] of posts){ const d=addTwistPost(no,h,true); d.scrollIntoView({behavior:'smooth',block:'center'}); shake(); beep(196,0.25,'square',0.07); vib([40,60,40]); await sleep(2600); }
-    const E=TWIST.effect||{}; const ov=document.createElement('div'); ov.className='tw';
+    const E=TWIST.effect||{}; const ov=document.createElement('div'); ov.className='tw'; if(E.bg) ov.style.background=E.bg;
     ov.innerHTML=`<button class="twskip" type="button">スキップ</button><h2>${esc(E.title||'答え合わせ')}</h2><div class="cnt"><span id="twn">0</span><small>${esc(E.unit||'')}</small></div><div class="lane" id="twlane"></div><div id="twrec"></div><div class="gacha" id="twg"></div><div class="twmsg" id="twmsg"></div><button class="twbtn" type="button">スレに戻る</button>`;
     document.body.appendChild(ov);
     const done=()=>{ ov.remove(); document.getElementById('clear').classList.add('on'); };
     ov.querySelector('.twskip').onclick=()=>{ skipped=true; T('kk_twist',{step:'skip'}); done(); };
     ov.querySelector('.twbtn').onclick=()=>{ T('kk_twist',{step:'end'}); done(); };
     const order=Object.keys(KEYS).filter(k=>found.includes(k));
-    for(let i=0;i<order.length;i++){ if(skipped) return; const pl=document.createElement('div'); pl.className='plate'; pl.textContent=LABEL[order[i]]; document.getElementById('twlane').appendChild(pl); const n=document.getElementById('twn'); n.textContent=i+1; n.classList.remove('bump'); void n.offsetWidth; n.classList.add('bump'); beep(400+i*38,0.06,'square',0.05); vib(10); await sleep(Math.max(70,190-i*7)); }
+    for(let i=0;i<order.length;i++){ if(skipped) return; const pl=document.createElement('div'); pl.className='plate'+(E.chip==='sign'?' sign':''); pl.textContent=LABEL[order[i]]; document.getElementById('twlane').appendChild(pl); const n=document.getElementById('twn'); n.textContent=i+1; n.classList.remove('bump'); void n.offsetWidth; n.classList.add('bump'); beep(400+i*38,0.06,'square',0.05); vib(10); await sleep(Math.max(70,190-i*7)); }
     if(skipped) return; await sleep(350);
     document.getElementById('twrec').innerHTML=`<div class="receipt">${esc(E.receipt||'')}</div>`; shake(); beep(130,0.3,'sawtooth',0.08); vib(120); await sleep(900);
     const G=E.gacha||0, W=(E.win??G-1);
     if(G){ const g=document.getElementById('twg'); for(let i=0;i<G;i++){ const c=document.createElement('div'); c.className='cap'; c.textContent='?'; g.appendChild(c);} 
       for(let i=0;i<G;i++){ if(skipped) return; const c=g.children[i]; c.classList.add('spin'); const spinMs=i===W?2200:900; const t0=Date.now(); let gap=60; while(Date.now()-t0<spinMs){ beep(1200,0.025,'square',0.03); await sleep(gap); gap=Math.min(260,gap*1.12);} c.classList.remove('spin');
         if(i===W){ const f=document.createElement('div'); f.className='flashw'; document.body.appendChild(f); setTimeout(()=>f.remove(),700); c.classList.add('win'); c.textContent='★'; const a=document.createElement('div'); a.className='atari'; a.textContent=E.win_text||'当たり！'; document.body.appendChild(a); setTimeout(()=>a.remove(),2300); fanfare(); confetti(160); vib([60,40,60,40,200]); shake(); }
-        else { c.classList.add('lose'); c.textContent='はずれ'; beep(150,0.18,'triangle',0.06); vib(30); }
+        else { c.classList.add('lose'); c.textContent=E.lose_text||'はずれ'; beep(150,0.18,'triangle',0.06); vib(30); }
         await sleep(i===W?1600:500); }
     } else { fanfare(); confetti(160); }
     if(skipped) return; document.getElementById('twmsg').innerHTML=esc(E.message||'').replace(/\n/g,'<br>'); ov.querySelector('.twbtn').classList.add('on');
