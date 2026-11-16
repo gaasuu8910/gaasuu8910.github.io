@@ -8,6 +8,11 @@ import json, re, sys, html, os
 MARK = re.compile(r'\{([^|{}]+)\|([^{}]+)\}')
 here = os.path.dirname(os.path.abspath(__file__))
 
+def sfx_uri(name):
+    import base64
+    f = os.path.join(here, 'sfx', name)
+    return ('data:audio/mpeg;base64,' + base64.b64encode(open(f, 'rb').read()).decode()) if os.path.exists(f) else ''
+
 def main():
     spec_path, outdir = sys.argv[1], sys.argv[2]
     base = os.path.dirname(os.path.abspath(spec_path))
@@ -50,7 +55,7 @@ def main():
         'TOTAL': str(len(keys)), 'RESCOUNT': str(1 + len(sp.get('replies', []))), 'THREAD': '\n'.join(posts),
         'FOOT': html.escape(sp['foot']), 'SHARE_URL': js(sp.get('share_url', '')), 'QUOTE_URL': js(sp.get('quote_url', '')), 'NEXT': html.escape(sp.get('next_schedule', '月・金の21時')), 'KEYS': js(keys),
         'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'MISS': sp.get('miss_verb', 'ない'), 'LEVELS': js(sp.get('levels', {})), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
-        'OP_ID_JS': js(sp['op_id']), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')),
+        'OP_ID_JS': js(sp['op_id']), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
     }
     for k, v in rep.items():
         t = t.replace('{{' + k + '}}', v)

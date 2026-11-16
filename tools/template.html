@@ -188,8 +188,8 @@
     <div class="k">■ かくれんぼスレ</div>
     <h2>全{{TOTAL}}個 クリア！</h2>
     <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です。<br>スレは毎週{{NEXT}}に立てるから、アカウントをフォローしてまた来てくれ」</div>
-    <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xで引用して自慢する</a>
-    <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る（@gaasuuquestionをフォロー）</a>
+    <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xでクリア報告</a>
+    <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
     <div class="next">次スレは毎週 {{NEXT}} に立ちます</div>
     <button class="close" id="clear-close" type="button">閉じる</button>
   </div>
@@ -228,13 +228,17 @@
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
   let AC=null; const ac=()=>{ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; };
   function beep(f,d=0.08,type='square',vol=0.06,delay=0){ const a=ac(); if(!a) return; try{ const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,a.currentTime+delay); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+delay+d); o.connect(g).connect(a.destination); o.start(a.currentTime+delay); o.stop(a.currentTime+delay+d+0.02);}catch(e){} }
+  const SFX = {twist:{{SFX_TWIST}}, post:{{SFX_POST}}}; const sfxBuf={}; let sfxLoading=false;
+  function loadSfx(){ const a=ac(); if(!a||sfxLoading) return; sfxLoading=true; for(const [k,uri] of Object.entries(SFX)){ if(!uri) continue; try{ const bin=atob(uri.split(',')[1]); const u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); a.decodeAudioData(u.buffer,b=>{sfxBuf[k]=b;},()=>{}); }catch(e){} } }
+  function playSfx(k='twist'){ const a=ac(); if(a&&sfxBuf[k]){ try{ const s=a.createBufferSource(); s.buffer=sfxBuf[k]; s.connect(a.destination); s.start(); return true; }catch(e){} } return false; }
+  function click(delay=0){ const a=ac(); if(!a) return; try{ const len=Math.floor(a.sampleRate*0.03), buf=a.createBuffer(1,len,a.sampleRate), d=buf.getChannelData(0); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,6); const s=a.createBufferSource(); s.buffer=buf; const f=a.createBiquadFilter(); f.type='highpass'; f.frequency.value=1800; const g=a.createGain(); g.gain.value=0.5; s.connect(f).connect(g).connect(a.destination); s.start(a.currentTime+delay); }catch(e){} }
   const fanfare=()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.22,'triangle',0.09,i*0.09));
   const vib=p=>{ try{ navigator.vibrate&&navigator.vibrate(p) }catch(e){} };
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   const shake=()=>{ document.body.classList.remove('shake'); void document.body.offsetWidth; document.body.classList.add('shake'); };
   function confetti(n=120){ const fx=document.createElement('div'); fx.className='exfx'; fx.style.zIndex=85; const cols=['#ffe066','#ff9de2','#9fd8ff','#b98cff','#fff','#ff6b6b']; let s=''; for(let i=0;i<n;i++){ s+=`<i style="left:${Math.random()*100}%;background:${cols[i%6]};animation-duration:${1.2+Math.random()*1.6}s;animation-delay:${Math.random()*.5}s"></i>`; } fx.innerHTML=s; document.body.appendChild(fx); setTimeout(()=>fx.remove(),3600); }
   function findFx(n){ // 1回の書き込みで見つけた数に応じたご褒美
-    if(!n) return; [0,1,2].slice(0,Math.min(3,n)).forEach(i=>beep(880+i*220+found.length*10,0.09,'square',0.05,i*0.07)); vib(n>1?[30,40,30]:20);
+    if(!n) return; for(let i=0;i<Math.min(3,n);i++) click(i*0.08); vib(n>1?[30,40,30]:20);
     if(n>=2){ const c=document.createElement('div'); c.className='combo'; c.textContent=`×${n} COMBO!`; document.body.appendChild(c); setTimeout(()=>c.remove(),1200); }
   }
   function twistPostsHTML(start){ let no=start; return TWIST.posts.map(p=>{ const myNo=++no; const nm=p.op?OP_NAME:(p.name||'名無しさん'); const id=p.op?OP_ID:(p.id||'???'); let body=esc(p.text).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\{PREV\}/g,`<span class="anc">&gt;&gt;${myNo-1}</span>`); return [myNo,`<div class="head"><span class="no">${myNo}</span> 名前：<span class="nm">${esc(nm)}</span> ID:${esc(id)}${p.op?'（&gt;&gt;1）':''}</div><div class="body">${body}</div>`]; }); }
@@ -244,8 +248,8 @@
     const dim=document.createElement('div'); dim.className='twdim'; dim.textContent='……'; document.body.appendChild(dim); beep(110,0.5,'sawtooth',0.06); vib(80);
     await sleep(1100); dim.remove();
     const posts=twistPostsHTML(resNo); resNo+=posts.length;
-    for(const [no,h] of posts){ const d=addTwistPost(no,h,true); d.scrollIntoView({behavior:'smooth',block:'center'}); shake(); beep(196,0.25,'square',0.07); vib([40,60,40]); await sleep(2600); }
-    if(!TWIST.effect){ fanfare(); confetti(140); vib([60,40,120]); T('kk_twist',{step:'end'}); await sleep(1800); document.getElementById('clear').classList.add('on'); return; }
+    for(const [no,h] of posts){ const d=addTwistPost(no,h,true); d.scrollIntoView({behavior:'smooth',block:'center'}); shake(); if(!playSfx('post')) beep(196,0.25,'square',0.07); vib([40,60,40]); await sleep(2600); }
+    if(!TWIST.effect){ confetti(140); document.getElementById('clear').classList.add('on'); vib([60,40,120]); T('kk_twist',{step:'end'}); return; }
     const E=TWIST.effect||{}; const ov=document.createElement('div'); ov.className='tw'; if(E.bg) ov.style.background=E.bg;
     ov.innerHTML=`<button class="twskip" type="button">スキップ</button><h2>${esc(E.title||'答え合わせ')}</h2><div class="cnt"><span id="twn">0</span><small>${esc(E.unit||'')}</small></div><div class="lane" id="twlane"></div><div id="twrec"></div><div class="gacha" id="twg"></div><div class="twmsg" id="twmsg"></div><button class="twbtn" type="button">スレに戻る</button>`;
     document.body.appendChild(ov);
@@ -308,7 +312,7 @@
   const okLines = ['正解。よく気づいたな','正解！ それな','せいかい','…バレたか','正解。目がいいな','正解。そこに気づくとは'];
   const replyBox = document.getElementById('reply');
   document.getElementById('f').addEventListener('submit', e=>{
-    e.preventDefault();
+    e.preventDefault(); ac(); loadSfx();
     const input = document.getElementById('msg');
     const raw = input.value.trim();
     if (!raw) return;
@@ -376,7 +380,7 @@
   if (window.KK_PREVIEW && TWIST && TWIST.posts){ // 確認用ページだけ: 20個見つけた状態から演出を再生
     const b=document.createElement('button'); b.type='button'; b.textContent='【確認用】20個見つけた状態から演出を見る';
     b.style.cssText='position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:90;background:#7a3dbd;color:#fff;border:0;border-radius:18px;padding:8px 14px;font-size:13px;font-weight:bold;box-shadow:0 3px 10px rgba(0,0,0,.3)';
-    b.onclick=()=>{ b.remove(); document.querySelectorAll('.post.tw-new,.post.tw-old').forEach(e=>e.remove()); found=Object.keys(KEYS); paint(null); ac(); runTwist(); };
+    b.onclick=()=>{ ac(); loadSfx(); b.remove(); document.querySelectorAll('.post.tw-new,.post.tw-old').forEach(e=>e.remove()); found=Object.keys(KEYS); paint(null); ac(); runTwist(); };
     document.body.appendChild(b);
   }
   if (TWIST && TWIST.posts && found.length>=TOTAL){ for(const [no,h] of twistPostsHTML(resNo)) addTwistPost(no,h,false); resNo+=TWIST.posts.length; }
