@@ -120,6 +120,39 @@
   .lv.ex .exd{font-size:12px;color:#7a3dbd;margin:0 0 6px}
   .lv.ex .chip.bk{background:#2b1a40;border-color:#7a3dbd;color:#2b1a40}
   .lbtn.exleft{position:relative}.lbtn.exleft:after{content:"EX";position:absolute;top:-8px;right:-8px;font-size:9px;font-weight:bold;color:#fff;background:linear-gradient(90deg,#ff9de2,#b98cff);border-radius:6px;padding:1px 4px}
+
+  /* ===== どんでん返し（TWIST）演出 ===== */
+  .shake{animation:exshake .45s}
+  .post.tw-new{animation:twin .6s ease-out;background:linear-gradient(90deg,rgba(255,225,77,.35),rgba(255,225,77,0))}
+  @keyframes twin{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
+  .post .body b{background:#ffe14d;padding:0 2px}
+  .twdim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;letter-spacing:6px;animation:twfade .4s}
+  @keyframes twfade{from{opacity:0}to{opacity:1}}
+  .tw{position:fixed;inset:0;z-index:70;background:radial-gradient(circle at 50% 30%,#3a1d0e,#120804);color:#fff;display:flex;flex-direction:column;align-items:center;padding:28px 16px 20px;box-sizing:border-box;overflow:hidden;animation:twfade .35s}
+  .tw h2{margin:6px 0 4px;font-size:22px;letter-spacing:2px;color:#ffd84d}
+  .tw .cnt{font-size:54px;font-weight:900;line-height:1;margin:6px 0 10px;text-shadow:0 0 18px rgba(255,200,60,.8)}
+  .tw .cnt small{font-size:22px;margin-left:4px}
+  .tw .cnt.bump{animation:bump .18s}
+  @keyframes bump{50%{transform:scale(1.25)}}
+  .lane{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:520px;min-height:150px;align-content:flex-start}
+  .plate{width:62px;height:62px;border-radius:50%;background:radial-gradient(circle,#fff 52%,#d33 54%,#d33 60%,#fff 62%);color:#222;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;text-align:center;line-height:1.1;box-shadow:0 4px 0 rgba(0,0,0,.35);animation:slidein .35s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes slidein{0%{transform:translateX(-160px) rotate(-90deg);opacity:0}100%{transform:none;opacity:1}}
+  .receipt{margin-top:14px;background:#fffdf5;color:#222;font-family:monospace;padding:10px 18px;border-radius:4px;font-size:20px;font-weight:bold;box-shadow:0 6px 0 rgba(0,0,0,.4);animation:stamp .5s cubic-bezier(.2,1.8,.4,1)}
+  @keyframes stamp{0%{transform:scale(3) rotate(-8deg);opacity:0}100%{transform:none;opacity:1}}
+  .gacha{display:flex;gap:14px;margin-top:20px}
+  .cap{width:64px;height:64px;border-radius:50%;background:linear-gradient(#ff6b6b 50%,#f4f4f4 50%);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:#333;transition:filter .3s}
+  .cap.spin{animation:wob .14s linear infinite}
+  @keyframes wob{0%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}100%{transform:rotate(-14deg)}}
+  .cap.lose{filter:grayscale(1) brightness(.6)}
+  .cap.win{background:radial-gradient(circle,#fff6b0,#ffb800);box-shadow:0 0 30px 10px rgba(255,210,60,.9);animation:winpop .6s cubic-bezier(.2,1.8,.4,1)}
+  @keyframes winpop{0%{transform:scale(.3)}100%{transform:scale(1.25)}}
+  .atari{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);font-size:68px;font-weight:900;color:#ffd84d;-webkit-text-stroke:3px #b30000;text-shadow:0 0 30px #ff0;z-index:80;animation:exban 2.2s forwards;white-space:nowrap}
+  .flashw{position:fixed;inset:0;background:#fff;z-index:75;animation:exflash .6s forwards;pointer-events:none}
+  .twmsg{margin-top:16px;font-size:16px;text-align:center;line-height:1.7;min-height:54px}
+  .twbtn{margin-top:auto;background:#ffd84d;color:#3a1d0e;border:0;border-radius:24px;padding:12px 28px;font-size:17px;font-weight:bold;opacity:0;transition:opacity .4s}
+  .twbtn.on{opacity:1}
+  .twskip{position:absolute;top:10px;right:12px;background:none;border:1px solid rgba(255,255,255,.4);color:#ddd;border-radius:14px;font-size:12px;padding:3px 10px}
+  .combo{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);font-size:40px;font-weight:900;color:#ff5a00;-webkit-text-stroke:2px #fff;z-index:55;pointer-events:none;animation:exban 1.1s forwards}
 </style>
 <!--GA-->
 </head>
@@ -190,6 +223,47 @@
     setTimeout(()=>fx.remove(),3200);
   }
   const OP_NAME = {{OP_NAME_JS}}, OP_ID = {{OP_ID_JS}};
+  const TWIST = {{TWIST}};
+  // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
+  let AC=null; const ac=()=>{ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; };
+  function beep(f,d=0.08,type='square',vol=0.06,delay=0){ const a=ac(); if(!a) return; try{ const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,a.currentTime+delay); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+delay+d); o.connect(g).connect(a.destination); o.start(a.currentTime+delay); o.stop(a.currentTime+delay+d+0.02);}catch(e){} }
+  const fanfare=()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.22,'triangle',0.09,i*0.09));
+  const vib=p=>{ try{ navigator.vibrate&&navigator.vibrate(p) }catch(e){} };
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const shake=()=>{ document.body.classList.remove('shake'); void document.body.offsetWidth; document.body.classList.add('shake'); };
+  function confetti(n=120){ const fx=document.createElement('div'); fx.className='exfx'; fx.style.zIndex=85; const cols=['#ffe066','#ff9de2','#9fd8ff','#b98cff','#fff','#ff6b6b']; let s=''; for(let i=0;i<n;i++){ s+=`<i style="left:${Math.random()*100}%;background:${cols[i%6]};animation-duration:${1.2+Math.random()*1.6}s;animation-delay:${Math.random()*.5}s"></i>`; } fx.innerHTML=s; document.body.appendChild(fx); setTimeout(()=>fx.remove(),3600); }
+  function findFx(n){ // 1回の書き込みで見つけた数に応じたご褒美
+    if(!n) return; [0,1,2].slice(0,Math.min(3,n)).forEach(i=>beep(880+i*220+found.length*10,0.09,'square',0.05,i*0.07)); vib(n>1?[30,40,30]:20);
+    if(n>=2){ const c=document.createElement('div'); c.className='combo'; c.textContent=`×${n} COMBO!`; document.body.appendChild(c); setTimeout(()=>c.remove(),1200); }
+  }
+  function twistPostsHTML(start){ let no=start; return TWIST.posts.map(p=>{ const myNo=++no; const nm=p.op?OP_NAME:(p.name||'名無しさん'); const id=p.op?OP_ID:(p.id||'???'); let body=esc(p.text).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\{PREV\}/g,`<span class="anc">&gt;&gt;${myNo-1}</span>`); return [myNo,`<div class="head"><span class="no">${myNo}</span> 名前：<span class="nm">${esc(nm)}</span> ID:${esc(id)}${p.op?'（&gt;&gt;1）':''}</div><div class="body">${body}</div>`]; }); }
+  function addTwistPost(no,html,anim){ const d=document.createElement('div'); d.className='post'+(anim?' tw-new':''); d.innerHTML=html; document.getElementById('thread').appendChild(d); document.getElementById('rescount').textContent=Math.max(+document.getElementById('rescount').textContent,no); return d; }
+  async function runTwist(){
+    T('kk_twist',{step:'start'}); let skipped=false;
+    const dim=document.createElement('div'); dim.className='twdim'; dim.textContent='……'; document.body.appendChild(dim); beep(110,0.5,'sawtooth',0.06); vib(80);
+    await sleep(1100); dim.remove();
+    const posts=twistPostsHTML(resNo); resNo+=posts.length;
+    for(const [no,h] of posts){ const d=addTwistPost(no,h,true); d.scrollIntoView({behavior:'smooth',block:'center'}); shake(); beep(196,0.25,'square',0.07); vib([40,60,40]); await sleep(2600); }
+    const E=TWIST.effect||{}; const ov=document.createElement('div'); ov.className='tw';
+    ov.innerHTML=`<button class="twskip" type="button">スキップ</button><h2>${esc(E.title||'答え合わせ')}</h2><div class="cnt"><span id="twn">0</span><small>${esc(E.unit||'')}</small></div><div class="lane" id="twlane"></div><div id="twrec"></div><div class="gacha" id="twg"></div><div class="twmsg" id="twmsg"></div><button class="twbtn" type="button">スレに戻る</button>`;
+    document.body.appendChild(ov);
+    const done=()=>{ ov.remove(); document.getElementById('clear').classList.add('on'); };
+    ov.querySelector('.twskip').onclick=()=>{ skipped=true; T('kk_twist',{step:'skip'}); done(); };
+    ov.querySelector('.twbtn').onclick=()=>{ T('kk_twist',{step:'end'}); done(); };
+    const order=Object.keys(KEYS).filter(k=>found.includes(k));
+    for(let i=0;i<order.length;i++){ if(skipped) return; const pl=document.createElement('div'); pl.className='plate'; pl.textContent=LABEL[order[i]]; document.getElementById('twlane').appendChild(pl); const n=document.getElementById('twn'); n.textContent=i+1; n.classList.remove('bump'); void n.offsetWidth; n.classList.add('bump'); beep(400+i*38,0.06,'square',0.05); vib(10); await sleep(Math.max(70,190-i*7)); }
+    if(skipped) return; await sleep(350);
+    document.getElementById('twrec').innerHTML=`<div class="receipt">${esc(E.receipt||'')}</div>`; shake(); beep(130,0.3,'sawtooth',0.08); vib(120); await sleep(900);
+    const G=E.gacha||0, W=(E.win??G-1);
+    if(G){ const g=document.getElementById('twg'); for(let i=0;i<G;i++){ const c=document.createElement('div'); c.className='cap'; c.textContent='?'; g.appendChild(c);} 
+      for(let i=0;i<G;i++){ if(skipped) return; const c=g.children[i]; c.classList.add('spin'); const spinMs=i===W?2200:900; const t0=Date.now(); let gap=60; while(Date.now()-t0<spinMs){ beep(1200,0.025,'square',0.03); await sleep(gap); gap=Math.min(260,gap*1.12);} c.classList.remove('spin');
+        if(i===W){ const f=document.createElement('div'); f.className='flashw'; document.body.appendChild(f); setTimeout(()=>f.remove(),700); c.classList.add('win'); c.textContent='★'; const a=document.createElement('div'); a.className='atari'; a.textContent=E.win_text||'当たり！'; document.body.appendChild(a); setTimeout(()=>a.remove(),2300); fanfare(); confetti(160); vib([60,40,60,40,200]); shake(); }
+        else { c.classList.add('lose'); c.textContent='はずれ'; beep(150,0.18,'triangle',0.06); vib(30); }
+        await sleep(i===W?1600:500); }
+    } else { fanfare(); confetti(160); }
+    if(skipped) return; document.getElementById('twmsg').innerHTML=esc(E.message||'').replace(/\n/g,'<br>'); ov.querySelector('.twbtn').classList.add('on');
+  }
+
   const norm = s => s.normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0)-0x60)).replace(/[\sー〜～・!！?？。.]/g,'');
   const alias = {};
   for (const k in KEYS) for (const a of KEYS[k]) alias[norm(a)] = k;
@@ -270,7 +344,8 @@
       if (exNew) exEffect(exNew);
       if (lastNew) document.querySelector(`.n[data-k="${lastNew}"]`).scrollIntoView({behavior:'smooth', block:'center'});
       if (lastNew && found.length>=TOTAL) T('kk_clear', {sec: Math.round((Date.now()-T0)/1000)});
-      if (lastNew && found.length>=TOTAL) setTimeout(()=>document.getElementById('clear').classList.add('on'), 1200);
+      findFx(newKeys.length);
+      if (lastNew && found.length>=TOTAL) { if (TWIST && TWIST.posts) setTimeout(runTwist, 900); else setTimeout(()=>document.getElementById('clear').classList.add('on'), 1200); }
       if (window.matchMedia('(pointer:fine)').matches) input.focus(); else input.blur();
     }, 500);
   });
@@ -296,6 +371,7 @@
   document.querySelectorAll('a[href*="intent/follow"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow')));
   document.getElementById('list-open').addEventListener('click',()=>T('kk_list_open',{pct: pct(found.length)}));
   let left=false; document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden' && !left){ left=true; T('kk_leave',{pct: pct(found.length), sec: Math.round((Date.now()-T0)/1000), tried: tried?1:0}); } });
+  if (TWIST && TWIST.posts && found.length>=TOTAL){ for(const [no,h] of twistPostsHTML(resNo)) addTwistPost(no,h,false); resNo+=TWIST.posts.length; }
   paint(null);
 })();
 </script>

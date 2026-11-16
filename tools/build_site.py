@@ -57,6 +57,8 @@ with sync_playwright() as pw:
         pg.on('pageerror', lambda e: errs.append(str(e)))
         pg.goto('file://' + os.path.join(out, 'index.html'))
         pg.fill('#msg', ' '.join(sp['keys'].keys())); pg.click('.post-btn'); pg.wait_for_timeout(2300)
+        if sp.get('twist'):
+            pg.wait_for_selector('.twskip', timeout=15000); pg.wait_for_timeout(1500); pg.click('.twskip'); pg.wait_for_timeout(500)
         prog = pg.inner_text('#prog-text'); ok = prog.startswith(f"{len(sp['keys'])} / {len(sp['keys'])}") and pg.is_visible('#clear') and not errs
         print(('OK  ' if ok else 'FAIL'), t['slug'], prog, errs)
         if not ok: failed.append(t['slug'])
