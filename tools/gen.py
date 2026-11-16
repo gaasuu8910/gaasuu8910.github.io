@@ -76,6 +76,39 @@ h1{{color:#c00;font-size:30px;line-height:1.4;margin:18px 0}}
 <div class="t">{plain}</div>
 <div class="q">&gt;&gt;1のどこかに、{html.escape(sp['noun'])}が{len(keys)}個隠れています。</div>
 </div></body></html>'''
+    if sp.get('poster_style') == 'ui':
+        # 検証B'/本番型: 冒頭だけ見せて、下にサイトの入力欄の絵（tools/poster_ui_sample.html と同じ見た目）
+        lines = [l for l in MARK.sub(lambda m: m.group(1), body).split('\n') if l.strip()][:6]
+        cnt = sp.get('counter', '個'); noun = html.escape(sp['noun'])
+        poster = f'''<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+body{{margin:0;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif}}
+.c{{width:1200px;height:1200px;background:#efefef;box-sizing:border-box;padding:56px 64px;display:flex;flex-direction:column}}
+.b{{font-size:26px;color:#777;border-bottom:1px solid #ccc;padding-bottom:12px}}
+h1{{color:#c00;font-size:40px;line-height:1.35;margin:22px 0 14px}}
+.h{{font-size:24px;color:#555}}.nm{{color:#008000;font-weight:bold}}
+.t{{font-size:38px;line-height:1.75;margin:12px 0 0 24px;color:#111;position:relative;height:420px;overflow:hidden}}
+.t:after{{content:"";position:absolute;left:0;right:0;bottom:0;height:200px;background:linear-gradient(rgba(239,239,239,0),#efefef)}}
+.more{{text-align:center;font-size:26px;color:#888;margin:-6px 0 22px}}
+.dock{{margin-top:auto;background:#fff;border-top:4px solid #c00;border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.12);padding:28px 30px}}
+.rule{{font-size:34px;font-weight:bold;color:#111;margin-bottom:20px}}.rule b{{background:#ffe14d;padding:0 8px}}
+.prog{{display:flex;align-items:center;gap:18px;font-size:28px;color:#555;margin-bottom:20px}}
+.bar{{flex:1;height:16px;background:#e5e5e5;border-radius:8px}}
+.box{{display:flex;gap:16px}}
+.in{{flex:1;height:84px;border:3px solid #bbb;border-radius:12px;font-size:32px;color:#aaa;display:flex;align-items:center;padding:0 22px}}
+.btn{{width:230px;height:84px;background:#d22;color:#fff;font-size:36px;font-weight:bold;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 #900}}
+.ex{{font-size:24px;color:#7a3dbd;margin-top:16px}}
+</style></head><body><div class="c" id="c">
+<div class="b">■ かくれんぼスレ ■ {html.escape(sp['board'])}</div>
+<h1>{html.escape(sp['title'])}</h1>
+<div class="h">1 名前：<span class="nm">{nm}</span> {sp['op_date']}</div>
+<div class="t">{'<br>'.join(html.escape(l) for l in lines)}</div>
+<div class="more">▼ 続きはリンク先のスレで</div>
+<div class="dock">
+<div class="rule">この書き込みに、<b>{noun}が{len(keys)}{cnt}</b>かくれている。</div>
+<div class="prog"><span>0 / {len(keys)}（0%）</span><div class="bar"></div><span>一覧</span></div>
+<div class="box"><div class="in">見つけた{noun}を書き込む</div><div class="btn">書き込む</div></div>
+<div class="ex">※うち1つは、ひとひねりある「高難度隠し」</div>
+</div></div></body></html>'''
     open(os.path.join(outdir, 'poster.html'), 'w', encoding='utf-8').write(poster)
     og = f'''<!DOCTYPE html><html><head><meta charset="utf-8"><style>
 body{{margin:0}}

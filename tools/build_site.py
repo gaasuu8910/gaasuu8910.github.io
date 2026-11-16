@@ -49,7 +49,7 @@ with sync_playwright() as pw:
         subprocess.run([sys.executable, os.path.join(TOOLS, 'gen.py'), sp_path, out], check=True)
         pg = b.new_page(viewport={'width': 1200, 'height': 630})
         pg.goto('file://' + os.path.join(out, 'og.html')); pg.locator('#c').screenshot(path=os.path.join(out, 'og.png'))
-        pg = b.new_page(viewport={'width': 900, 'height': 1200}, device_scale_factor=1.5)
+        pg = b.new_page(viewport={'width': 1200, 'height': 1200}, device_scale_factor=1.5)
         pg.goto('file://' + os.path.join(out, 'poster.html')); pg.locator('#c').screenshot(path=os.path.join(src, 'post.png'))
         os.remove(os.path.join(out, 'og.html')); os.remove(os.path.join(out, 'poster.html'))
         # 自動テスト: 全語を書き込む → 100% とクリア画面

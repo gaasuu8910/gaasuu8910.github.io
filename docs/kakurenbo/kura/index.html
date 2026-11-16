@@ -115,6 +115,11 @@
   .chip{font-size:14px;padding:3px 9px;border-radius:12px;background:#ffe14d;border:1px solid #e0b800}
   .chip.bk{background:#111;border-color:#111;color:#111;letter-spacing:2px;user-select:none}
   .lv.ex .chip:not(.bk){background:linear-gradient(90deg,#ffd84d,#ff9de2,#9fd8ff);border-color:#7a3dbd}
+  .lv.ex{margin:0 0 14px;padding:10px 12px;border-radius:10px;border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(90deg,#ffd84d,#ff9de2,#9fd8ff,#b98cff) border-box}
+  .lv.ex h3{font-size:16px;color:#7a3dbd}
+  .lv.ex .exd{font-size:12px;color:#7a3dbd;margin:0 0 6px}
+  .lv.ex .chip.bk{background:#2b1a40;border-color:#7a3dbd;color:#2b1a40}
+  .lbtn.exleft{position:relative}.lbtn.exleft:after{content:"EX";position:absolute;top:-8px;right:-8px;font-size:9px;font-weight:bold;color:#fff;background:linear-gradient(90deg,#ff9de2,#b98cff);border-radius:6px;padding:1px 4px}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6995F0CYV1"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-6995F0CYV1');</script>
 </head>
@@ -253,6 +258,7 @@
     const text = n>=TOTAL ? `投稿文に隠された寿司ネタを、${TOTAL}個ぜんぶ見つけた。\n#かくれんぼスレ`
       : n===0 ? `投稿文に寿司ネタが${TOTAL}個かくれているらしい。\n#かくれんぼスレ`
       : `投稿文に隠された寿司ネタ、${n}/${TOTAL}まで見つけた。\nあと${TOTAL-n}個がどうしても見つからない…\n#かくれんぼスレ`;
+    document.getElementById('list-open').classList.toggle('exleft', n>0 && Object.keys(SPECIAL).some(k=>!found.includes(k)));
     document.getElementById('share').classList.toggle('hot', n>=Math.ceil(TOTAL*0.8) && n<TOTAL);
     const p = new URLSearchParams({text});
     const u = QUOTE_URL || SHARE_URL;
@@ -309,7 +315,7 @@
   });
 
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
-  const LVDEF=[[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる'],['EX','EX','ひとひねりある高難度隠し']];
+  const LVDEF=[['EX','★ EX 高難度隠し','ひとひねりある隠し方。見つけられたら上級者'],[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる']];
   function renderList(){
     const body=document.getElementById('list-body'); let h='';
     for (const [lv,name,desc] of LVDEF){
