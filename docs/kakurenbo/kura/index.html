@@ -262,7 +262,7 @@
     setTimeout(()=>fx.remove(),3200);
   }
   const OP_NAME = "名無しさん＠回転中", OP_ID = "Gs0suUq1";
-  const TWIST = {"posts": [{"name": "名無しさん＠回転中", "id": "Rk3mQp7x", "text": "ちょっと待て。\n>>1が書いた寿司ネタ、全部で20個だよな？\nびっくらぽんって、5皿で1回だろ。\n……**こいつ、裏技書くフリして、今日食べた皿を報告してるだけじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n20皿で、4回まわした。\n裏技はない。**食べた分だけ当たる。それだけだ。**"}], "effect": {"title": "本日のお皿", "unit": "皿", "receipt": "お会計　20皿", "gacha": 4, "win": 3, "win_text": "当たり！", "message": "食べた分だけ、当たる。\nそれが唯一の裏技だった。"}};
+  const TWIST = {"posts": [{"name": "名無しさん＠回転中", "id": "Rk3mQp7x", "text": "ちょっと待て。\n>>1が書いた寿司ネタ、全部で20個だよな？\nびっくらぽんって、5皿で1回だろ。\n……**こいつ、裏技書くフリして、今日食べた皿を報告してるだけじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n20皿で、4回まわした。\n裏技はない。**食べた分だけ当たる。それだけだ。**"}], "effect": {"title": "本日のお皿", "unit": "皿", "receipt": "お会計　20皿", "gacha": 4, "win": 3, "win_text": "当たり！"}};
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
   let AC=null; const ac=()=>{ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; };
   function beep(f,d=0.08,type='square',vol=0.06,delay=0){ const a=ac(); if(!a) return; try{ const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,a.currentTime+delay); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+delay+d); o.connect(g).connect(a.destination); o.start(a.currentTime+delay); o.stop(a.currentTime+delay+d+0.02);}catch(e){} }
