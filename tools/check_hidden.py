@@ -22,8 +22,12 @@ def main():
     body = open(sys.argv[1], encoding='utf-8').read()
     words = [w.strip() for w in open(sys.argv[2], encoding='utf-8').read().split() if w.strip()]
     fixes = [a.split('=', 1)[1].split(':') for a in sys.argv[3:] if a.startswith('fix=')]
+    body = body.replace('[[', '').replace(']]', '')
+    if '<<省略>>' in body:
+        import os
+        body = body.replace('<<省略>>', '\n省略されました・・全てを読むにはここを押してください\n' if os.environ.get('OMIT')=='closed' else '')
     plain = MARK.sub(lambda m: m.group(1), body)
-    marks = MARK.findall(body)
+    marks = [(v, x) for v, k in MARK.findall(body) for x in k.split('/')]
     r = reading(plain)
     for a, b in fixes:
         r = r.replace(a, b)

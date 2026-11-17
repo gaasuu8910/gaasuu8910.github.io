@@ -18,44 +18,73 @@ def main():
     base = os.path.dirname(os.path.abspath(spec_path))
     sp = json.load(open(spec_path, encoding='utf-8'))
     body = open(os.path.join(base, sp['body']), encoding='utf-8').read().strip()
-    marks = sorted(set(k for _, k in MARK.findall(body)))
+    # スレタイ・名前欄にも {表示|読み} で隠し語を置ける（高難度隠し用）
+    def mk_html(text):
+        out, last = [], 0
+        for m in MARK.finditer(text):
+            out.append(html.escape(text[last:m.start()])); out.append(f'<span class="n" data-k="{html.escape(m.group(2))}">{html.escape(m.group(1))}</span>'); last = m.end()
+        return ''.join(out) + html.escape(text[last:])
+    title_raw, name_raw, date_raw = sp['title'], sp['op_name'], sp['op_date']
+    reply_raw = ''.join(r[2] for r in sp.get('replies', []))
+    outer_marks = set(k for _, k in MARK.findall(title_raw + name_raw + date_raw + reply_raw))
+    sp['op_date'] = MARK.sub(lambda m: m.group(1), date_raw)
+    sp['title'] = MARK.sub(lambda m: m.group(1), title_raw); sp['op_name'] = MARK.sub(lambda m: m.group(1), name_raw)
+    marks = sorted(set(x for _, k in MARK.findall(body) for x in k.split('/')) | outer_marks)
     keys = sp['keys']
     assert sorted(keys) == sorted(set(marks) | ({sp['op_id_key']} if sp.get('op_id_key') else set())), f'keys mismatch: {set(keys) ^ set(marks)}'
 
     def mark(m):
-        return f'<span class="n" data-k="{html.escape(m.group(2))}">{html.escape(m.group(1))}</span>'
+        inner = html.escape(m.group(1))
+        for k in reversed(m.group(2).split('/')):
+            inner = f'<span class="n" data-k="{html.escape(k)}">{inner}</span>'
+        return inner
     parts, last = [], 0
     for m in MARK.finditer(body):
         parts.append(html.escape(body[last:m.start()])); parts.append(mark(m)); last = m.end()
     parts.append(html.escape(body[last:]))
-    op_html = ''.join(parts)
+    op_html = ''.join(parts).replace('[[', '<span class="inv">').replace(']]', '</span>')
+    OMIT = '&lt;&lt;省略&gt;&gt;'
+    if OMIT in op_html:
+        a, b = op_html.split(OMIT, 1)
+        op_html = (a + '<span class="omitbox"><br><a href="#" class="omit-link">省略されました・・全てを読むにはここを押してください</a></span>'
+                   + '<span class="omit-rest" hidden>' + b + '</span>')
 
-    nm = html.escape(sp['op_name'])
+    nm = mk_html(name_raw)
     op_id_html = html.escape(sp['op_id'])
     if sp.get('op_id_key'):
         op_id_html = f'<span class="n" data-k="{sp["op_id_key"]}">{op_id_html}</span>'
         marks = sorted(set(marks) | {sp['op_id_key']})
         assert sorted(keys) == marks, 'keys mismatch (id)'
     posts = [f'''    <div class="post" id="r1">
-      <div class="head"><span class="no">1</span> 名前：<span class="nm">{nm}</span> 投稿日：{sp['op_date']} ID:{op_id_html}</div>
+      <div class="head"><span class="no">1</span> 名前：<span class="nm">{nm}</span> 投稿日：{mk_html(date_raw)} ID:{op_id_html}</div>
       <div class="body" id="op">{op_html}</div>
     </div>''']
     for i, (rid, date, text) in enumerate(sp.get('replies', []), start=2):
         posts.append(f'''    <div class="post">
       <div class="head"><span class="no">{i}</span> 名前：<span class="nm">{nm}</span> 投稿日：{date} ID:{rid}</div>
-      <div class="body">{html.escape(text)}</div>
+      <div class="body">{mk_html(text)}</div>
     </div>''')
 
+    others = []
+    try:
+        repo = os.path.dirname(here)
+        for th in sorted(json.load(open(os.path.join(repo, 'threads.json'), encoding='utf-8')), key=lambda x: -x['no']):
+            if th['slug'] == os.path.basename(base): continue
+            osp = json.load(open(os.path.join(repo, 'threads', th['slug'], 'spec.json'), encoding='utf-8'))
+            others.append({'slug': th['slug'], 'title': MARK.sub(lambda m: m.group(1), osp['title']), 'noun': osp['noun'],
+                           'total': len(osp['keys']), 'counter': osp.get('counter', '個'), 'store': osp['store']})
+    except Exception as e:
+        print('others skipped:', e)
     t = open(os.path.join(here, 'template.html'), encoding='utf-8').read()
     js = lambda v: json.dumps(v, ensure_ascii=False)
     rep = {
-        'DESC': html.escape(f"この書き込みに、{sp['noun']}が{len(keys)}個隠れています。何%見つけられる？ #かくれんぼスレ"),
+        'DESC': html.escape(f"この掲示板のどこかに、{sp['noun']}が{len(keys)}個隠れています。何%見つけられる？ #かくれんぼスレ"),
         'PAGE_URL': html.escape(sp.get('page_url', '')),
-        'TITLE': html.escape(sp['title']), 'BOARD': html.escape(sp['board']), 'NOUN': html.escape(sp['noun']),
+        'TITLE': html.escape(sp['title']), 'TITLE_HTML': mk_html(title_raw), 'BOARD': html.escape(sp['board']), 'NOUN': html.escape(sp['noun']),
         'TOTAL': str(len(keys)), 'RESCOUNT': str(1 + len(sp.get('replies', []))), 'THREAD': '\n'.join(posts),
         'FOOT': html.escape(sp['foot']), 'SHARE_URL': js(sp.get('share_url', '')), 'QUOTE_URL': js(sp.get('quote_url', '')), 'NEXT': html.escape(sp.get('next_schedule', '月・金の21時')), 'KEYS': js(keys),
         'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'MISS': sp.get('miss_verb', 'ない'), 'LEVELS': js(sp.get('levels', {})), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
-        'OP_ID_JS': js(sp['op_id']), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
+        'OP_ID_JS': js(sp['op_id']), 'OTHERS': js(others), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
     }
     for k, v in rep.items():
         t = t.replace('{{' + k + '}}', v)
@@ -65,7 +94,7 @@ def main():
     open(os.path.join(outdir, 'index.html'), 'w', encoding='utf-8').write(t)
 
     # X投稿用画像のHTML
-    plain = html.escape(MARK.sub(lambda m: m.group(1), body))
+    plain = html.escape(MARK.sub(lambda m: m.group(1), body).replace('<<省略>>', ''))
     poster = f'''<!DOCTYPE html><html><head><meta charset="utf-8"><style>
 body{{margin:0;background:#efefef;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif}}
 .c{{width:900px;padding:40px 48px 36px;box-sizing:border-box}}
@@ -83,7 +112,7 @@ h1{{color:#c00;font-size:30px;line-height:1.4;margin:18px 0}}
 </div></body></html>'''
     if sp.get('poster_style') == 'ui':
         # 検証B'/本番型: 冒頭だけ見せて、下にサイトの入力欄の絵（tools/poster_ui_sample.html と同じ見た目）
-        lines = [l for l in MARK.sub(lambda m: m.group(1), body).split('\n') if l.strip()][:6]
+        lines = [l for l in MARK.sub(lambda m: m.group(1), body).replace('<<省略>>', '').split('\n') if l.strip()][:6]
         cnt = sp.get('counter', '個'); noun = html.escape(sp['noun'])
         poster = f'''<!DOCTYPE html><html><head><meta charset="utf-8"><style>
 body{{margin:0;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif}}
@@ -109,7 +138,7 @@ h1{{color:#c00;font-size:40px;line-height:1.35;margin:22px 0 14px}}
 <div class="t">{'<br>'.join(html.escape(l) for l in lines)}</div>
 <div class="more">▼ 続きはリンク先のスレで</div>
 <div class="dock">
-<div class="rule">この書き込みに、<b>{noun}が{len(keys)}{cnt}</b>かくれている。</div>
+<div class="rule">この掲示板のどこかに、<b>{noun}が{len(keys)}{cnt}</b>かくれている。</div>
 <div class="prog"><span>0 / {len(keys)}（0%）</span><div class="bar"></div><span>一覧</span></div>
 <div class="box"><div class="in">見つけた{noun}を書き込む</div><div class="btn">書き込む</div></div>
 <div class="ex">※うち1つは、ひとひねりある「高難度隠し」</div>
@@ -125,7 +154,7 @@ body{{margin:0}}
 </style></head><body><div class="o" id="c">
 <div class="b">■ かくれんぼスレ ■ {html.escape(sp['board'])}</div>
 <div class="t">{html.escape(sp['title'])}</div>
-<div class="q">この書き込みに、<span>{html.escape(sp['noun'])}が{len(keys)}個</span>隠れています。</div>
+<div class="q">この掲示板のどこかに、<span>{html.escape(sp['noun'])}が{len(keys)}個</span>隠れています。</div>
 </div></body></html>'''
     open(os.path.join(outdir, 'og.html'), 'w', encoding='utf-8').write(og)
     print('generated', outdir, len(keys), 'keys')

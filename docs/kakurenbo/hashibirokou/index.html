@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>【ハシビロコウを“確実に動かす方法”、知ってる人いる？】｜かくれんぼスレ</title>
-<meta name="description" content="この書き込みに、動物が20個隠れています。何%見つけられる？ #かくれんぼスレ">
+<meta name="description" content="この掲示板のどこかに、動物が20個隠れています。何%見つけられる？ #かくれんぼスレ">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="かくれんぼスレ">
 <meta property="og:title" content="【ハシビロコウを“確実に動かす方法”、知ってる人いる？】">
-<meta property="og:description" content="この書き込みに、動物が20個隠れています。何%見つけられる？ #かくれんぼスレ">
+<meta property="og:description" content="この掲示板のどこかに、動物が20個隠れています。何%見つけられる？ #かくれんぼスレ">
 <meta property="og:url" content="https://gaasuu8910.github.io/kakurenbo/hashibirokou/">
 <meta property="og:image" content="https://gaasuu8910.github.io/kakurenbo/hashibirokou/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -126,6 +126,21 @@
   .post.tw-new{animation:twin .6s ease-out;background:linear-gradient(90deg,rgba(255,225,77,.35),rgba(255,225,77,0))}
   @keyframes twin{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
   .post .body b{background:#ffe14d;padding:0 2px}
+  .others{margin:18px 0 6px;border:1px solid #c9c9c9;background:#fff;border-radius:4px;padding:10px 12px}
+  .others .oh{font-weight:bold;font-size:14px;color:var(--title);margin-bottom:6px}
+  .others ul{list-style:none;margin:0;padding:0}
+  .others li{padding:7px 0;border-top:1px dotted #ccc;font-size:14px;line-height:1.45}
+  .others li:first-child{border-top:0}
+  .others a{color:var(--link);font-weight:bold;text-decoration:none}
+  .others .om{display:block;font-size:12px;color:#666}
+  .others .st{display:inline-block;font-size:11px;padding:0 6px;border-radius:9px;margin-left:6px;background:#eee;color:#555;vertical-align:1px}
+  .others .st.new{background:#ffe14d;color:#000}
+  .others .st.done{background:#d8f5d0;color:#226622}
+  .clear .more{margin-top:10px;text-align:left;font-size:13px;border-top:1px dashed #ccc;padding-top:8px}
+  .clear .more b{display:block;color:var(--title);margin-bottom:4px}
+  .clear .more a{display:block;color:var(--link);font-weight:bold;text-decoration:none;padding:3px 0}
+  .omit-link{color:var(--link);text-decoration:underline;font-size:.92em}
+  .inv{color:var(--bg)} .inv .n.found,.inv .n.reveal{color:var(--ink)}
   .twdim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;letter-spacing:6px;animation:twfade .4s}
   @keyframes twfade{from{opacity:0}to{opacity:1}}
   .tw{position:fixed;inset:0;z-index:70;background:radial-gradient(circle at 50% 30%,#3a1d0e,#120804);color:#fff;display:flex;flex-direction:column;align-items:center;padding:28px 16px 20px;box-sizing:border-box;overflow:hidden;animation:twfade .35s}
@@ -162,7 +177,7 @@
   <div class="board">■ かくれんぼスレ ■ 動物・ペット板</div>
   <h1 id="title">【ハシビロコウを“確実に動かす方法”、知ってる人いる？】</h1>
   <div class="info"><b id="rescount">4</b> コメント ／ <span id="found-info">隠れ動物 0/20</span></div>
-  <div class="rule"><b>&gt;&gt;1のどこかに、動物が20個隠れています。</b><br>見つけたら下の欄からレスしよう。ひらがな・カタカナ・漢字OK、まとめて書いてもOK。<br><span class="exhint">※うち1つは、ひとひねりある<b>「高難度隠し」</b></span></div>
+  <div class="rule"><b>この掲示板のどこかに、動物が20個隠れています。</b><br>見つけたら下の欄からレスしよう。ひらがな・カタカナ・漢字OK、まとめて書いてもOK。<br><span class="exhint">※うち1つは、ひとひねりある<b>「高難度隠し」</b></span></div>
 
   <div id="thread">
     <div class="post" id="r1">
@@ -202,6 +217,8 @@
     </div>
   </div>
 
+  <div class="others" id="others" hidden><div class="oh">このスレを見ている人はこんなスレも見ています</div><ul id="others-list"></ul></div>
+
   <div class="foot">※このスレッドはフィクションの謎解きゲームです。実在の動物園や飼育方法とは関係ありません。<br>制作：ガースー/MICHI（@gaasuuquestion）<br>※アクセス解析にGoogleアナリティクスを使っています（Cookieを使用）</div>
 </div>
 
@@ -224,6 +241,7 @@
     <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です。<br>スレは毎週火・金・日の21時に立てるから、アカウントをフォローしてまた来てくれ」</div>
     <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xでクリア報告</a>
     <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
+    <div class="more" id="clear-more" hidden><b>まだ遊んでないスレ</b></div>
     <div class="next">次スレは毎週 火・金・日の21時 に立ちます</div>
     <button class="close" id="clear-close" type="button">閉じる</button>
   </div>
@@ -330,9 +348,9 @@
     document.getElementById('prog-text').textContent = `${n} / ${TOTAL}（${pct(n)}%）`;
     document.getElementById('prog-bar').style.width = pct(n)+'%';
     document.getElementById('found-info').textContent = `隠れ動物 ${n}/${TOTAL}`;
-    const text = n>=TOTAL ? `投稿文に隠された動物を、${TOTAL}個ぜんぶ見つけた。\n#かくれんぼスレ`
-      : n===0 ? `投稿文に動物が${TOTAL}個かくれているらしい。\n#かくれんぼスレ`
-      : `投稿文に隠された動物、${n}/${TOTAL}まで見つけた。\nあと${TOTAL-n}個がどうしても見つからない…\n#かくれんぼスレ`;
+    const text = n>=TOTAL ? `掲示板に隠された動物を、${TOTAL}個ぜんぶ見つけた。\n#かくれんぼスレ`
+      : n===0 ? `掲示板に動物が${TOTAL}個かくれているらしい。\n#かくれんぼスレ`
+      : `掲示板に隠された動物、${n}/${TOTAL}まで見つけた。\nあと${TOTAL-n}個がどうしても見つからない…\n#かくれんぼスレ`;
     document.getElementById('list-open').classList.toggle('exleft', n>0 && Object.keys(SPECIAL).some(k=>!found.includes(k)));
     document.getElementById('share').classList.toggle('hot', n>=Math.ceil(TOTAL*0.8) && n<TOTAL);
     const p = new URLSearchParams({text});
@@ -390,6 +408,30 @@
     }, 500);
   });
 
+  // ほかのスレへの導線（このスレを見ている人はこんなスレも見ています）
+  const OTHERS = [{"slug": "kisei", "title": "【帰省ラッシュを“確実に回避する裏技”、毎年使ってるやついる？】", "noun": "都道府県", "total": 20, "counter": "個", "store": "kisei-found-v2"}, {"slug": "kura", "title": "【くら寿司のびっくらぽん、昔“当たりやすくなる裏技”ありませんでした？】", "noun": "寿司ネタ", "total": 20, "counter": "個", "store": "kura-found-v9"}];
+  function otherState(o){ let n=0; try{ n=(JSON.parse(localStorage.getItem(o.store)||'[]')||[]).length; }catch(e){} return n>=o.total?'done':(n>0?'mid':'new'); }
+  function renderOthers(){
+    if(!OTHERS.length) return;
+    const ul=document.getElementById('others-list'); ul.innerHTML='';
+    OTHERS.forEach(o=>{ const st=otherState(o); const lab=st==='done'?'クリア済み':(st==='mid'?'途中':'未挑戦');
+      const li=document.createElement('li');
+      li.innerHTML=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="list">${esc(o.title)}</a><span class="st ${st}">${lab}</span><span class="om">${esc(o.noun)}が${o.total}${esc(o.counter)}かくれている</span>`;
+      ul.appendChild(li); });
+    document.getElementById('others').hidden=false;
+    const more=document.getElementById('clear-more'); more.querySelectorAll('a').forEach(a=>a.remove());
+    const left=OTHERS.filter(o=>otherState(o)!=='done').slice(0,3);
+    left.forEach(o=>{ const a=document.createElement('a'); a.href=`../${o.slug}/`; a.dataset.slug=o.slug; a.dataset.where='clear'; a.textContent='▶ '+o.title; more.appendChild(a); });
+    more.hidden=!left.length;
+  }
+  document.addEventListener('click',e=>{ const a=e.target.closest('a[data-slug]'); if(a) T('kk_cross',{to:a.dataset.slug, where:a.dataset.where}); });
+  renderOthers();
+  const dockEl=document.querySelector('.dock'), wrapEl=document.querySelector('.wrap');
+  const padDock=()=>{ if(dockEl&&wrapEl) wrapEl.style.paddingBottom=(dockEl.offsetHeight+24)+'px'; };
+  padDock(); window.addEventListener('resize',padDock); try{ new ResizeObserver(padDock).observe(dockEl); }catch(e){}
+  // 2ch風の「省略されました」: 押すと続きを表示（再読み込みで畳み直し）
+  document.querySelectorAll('.omit-link').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault();
+    const box=a.closest('.omitbox'), rest=box&&box.nextElementSibling; if(rest) rest.hidden=false; if(box) box.remove(); T('kk_omit_open',{}); }));
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
   const LVDEF=[['EX','★ EX 高難度隠し','ひとひねりある隠し方。見つけられたら上級者'],[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる']];
   function renderList(){
