@@ -450,7 +450,7 @@
   document.getElementById('list').onclick=e=>{ if(e.target.id==='list') e.currentTarget.classList.remove('on'); };
   document.getElementById('share').addEventListener('click',()=>T('kk_share',{where:'dock', pct: pct(found.length)}));
   document.getElementById('share2').addEventListener('click',()=>T('kk_share',{where:'clear', pct: pct(found.length)}));
-  document.querySelectorAll('a[href="https://x.com/gaasuuquestion"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow')));
+  document.querySelectorAll('a[href="https://x.com/gaasuuquestion"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow',{where: a.closest('#clear') ? 'clear' : 'dock'})));
   document.getElementById('list-open').addEventListener('click',()=>T('kk_list_open',{pct: pct(found.length)}));
   let left=false; document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden' && !left){ left=true; T('kk_leave',{pct: pct(found.length), sec: Math.round((Date.now()-T0)/1000), tried: tried?1:0}); } });
   if (window.KK_PREVIEW && TWIST && TWIST.posts){ // 確認用ページだけ: 20個見つけた状態から演出を再生
