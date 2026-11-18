@@ -171,6 +171,28 @@
   .twbtn.on{opacity:1}
   .twskip{position:absolute;top:10px;right:12px;background:none;border:1px solid rgba(255,255,255,.4);color:#ddd;border-radius:14px;font-size:12px;padding:3px 10px}
   .combo{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);font-size:40px;font-weight:900;color:#ff5a00;-webkit-text-stroke:2px #fff;z-index:55;pointer-events:none;animation:exban 1.1s forwards}
+  .hbtn{border-color:#d9a400;background:#fff6c8;font-weight:bold}
+  .hbtn.lock{border-color:#bbb;background:#f2f2f2;color:#888;font-weight:normal}
+  .hint-hl{position:absolute;pointer-events:none;background:rgba(255,221,64,.42);outline:3px solid #f2b400;border-radius:6px;z-index:5;animation:hlp 1s ease-in-out 3}
+  @keyframes hlp{50%{background:rgba(255,221,64,.15)}}
+  .hint-tip{position:fixed;left:50%;top:12px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;line-height:1.5;z-index:96;max-width:88vw;box-shadow:0 4px 14px rgba(0,0,0,.3);text-align:center}
+  .chip.hintable{cursor:pointer;outline:2px dashed #f2b400;outline-offset:1px}
+  .tut{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:60}
+  .tut.on{display:flex}
+  .tut .box{background:#fff;border-radius:14px;max-width:380px;width:100%;padding:18px 18px 16px;text-align:center}
+  .tut .sl{display:none}.tut .sl.on{display:block}
+  .tut svg{width:100%;height:auto;background:#f6f6f6;border-radius:10px;margin:6px 0 10px}
+  .tut h4{margin:0 0 4px;font-size:17px}.tut p{margin:0;font-size:13px;color:#555;line-height:1.6}
+  .tut .dots{margin:12px 0 10px}.tut .dots i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ccc;margin:0 3px}.tut .dots i.on{background:#e33}
+  .tut .nav{display:flex;gap:8px;justify-content:center}
+  .tut .nav button{font:inherit;font-size:14px;padding:8px 16px;border-radius:18px;border:1px solid #bbb;background:#fff;cursor:pointer}
+  .tut .nav .pri{background:#e33;border-color:#e33;color:#fff;font-weight:bold}
+  .stamp{font-weight:bold;color:#b8860b}
+  .lv.oth h3{color:#333}.lv.oth a{display:block;font-size:13px;padding:6px 0;border-top:1px dotted #ccc;color:#06c;text-decoration:none}.lv.oth a span{font-size:11px;color:#888;margin-left:6px}
+  .stuck{position:fixed;left:50%;transform:translateX(-50%);width:min(440px,92vw);background:#fff;border:2px solid #f2b400;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);padding:12px 14px;z-index:45;font-size:14px;line-height:1.5}
+  .stuck b{display:block;margin-bottom:4px}.stuck .x{position:absolute;top:4px;right:8px;border:0;background:none;font-size:20px;cursor:pointer;color:#888}
+  .stuck .act{display:flex;flex-direction:column;gap:6px;margin-top:8px}.stuck .act a,.stuck .act button{font:inherit;font-size:13px;text-align:left;padding:7px 10px;border-radius:8px;border:1px solid #ddd;background:#fafafa;color:#222;text-decoration:none;cursor:pointer}
+  .stuck .act .hi{background:#fff6c8;border-color:#d9a400;font-weight:bold}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6995F0CYV1"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-6995F0CYV1');</script>
 </head>
@@ -228,8 +250,8 @@
 <div class="dock">
   <div class="dock-in">
     <div class="reply" id="reply" hidden></div>
-    <div class="prog"><span id="prog-text">0 / 20（0%）</span><div class="bar"><i id="prog-bar"></i></div><button type="button" class="lbtn" id="list-open">一覧</button><a class="xbtn" id="share" href="#" target="_blank" rel="noopener">Xに投稿</a></div>
-    <div class="nextline">次スレは毎週 火・金・日の21時｜<a href="../" data-slug="index" data-where="dock">過去スレ一覧</a>｜<a href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">フォローして見逃さない</a></div>
+    <div class="prog"><span id="prog-text">0 / 20（0%）</span><div class="bar"><i id="prog-bar"></i></div><button type="button" class="lbtn" id="list-open">一覧</button><button type="button" class="lbtn hbtn" id="hint-open" hidden>ヒント</button><a class="xbtn" id="share" href="#" target="_blank" rel="noopener">Xに投稿</a></div>
+    <div class="nextline"><span class="stamp" id="stamp"></span>次スレは毎週 火・金・日の21時｜<a href="../" data-slug="index" data-where="dock">過去スレ一覧</a>｜<a href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">フォローして見逃さない</a></div>
     <form id="f" autocomplete="off">
       <input type="text" id="msg" placeholder="見つけた都道府県を書き込む" enterkeyhint="send">
       <button type="submit" class="post-btn">書き込む</button>
@@ -258,6 +280,25 @@
   </div>
 </div>
 
+<div class="tut" id="tut" role="dialog" aria-modal="true">
+  <div class="box">
+    <div class="sl on"><h4>💡 ヒントが解禁されました</h4>
+      <svg viewBox="0 0 280 150"><rect x="40" y="22" width="200" height="110" rx="10" fill="#fff" stroke="#ccc"/><rect x="40" y="22" width="200" height="26" rx="10" fill="#e33"/><text x="140" y="40" font-size="13" fill="#fff" text-anchor="middle" font-weight="bold">毎週 木曜日</text><g font-size="12" fill="#888" text-anchor="middle"><text x="62" y="70">月</text><text x="88" y="70">火</text><text x="114" y="70">水</text><text x="166" y="70">金</text><text x="192" y="70">土</text><text x="218" y="70">日</text></g><circle cx="140" cy="66" r="13" fill="#ffdd40"/><text x="140" y="70" font-size="13" text-anchor="middle" font-weight="bold">木</text><text x="140" y="112" font-size="13" text-anchor="middle" fill="#333">先週のスレのヒントが解禁</text></svg>
+      <p>毎週木曜、前の週に出たスレのヒントが見られるようになります。</p></div>
+    <div class="sl"><h4>① 「一覧」を開く</h4>
+      <svg viewBox="0 0 280 150"><rect x="20" y="96" width="240" height="40" rx="8" fill="#fff" stroke="#ccc"/><text x="34" y="121" font-size="12" fill="#666">8 / 20（40%）</text><rect x="150" y="106" width="44" height="22" rx="3" fill="#fff" stroke="#e33" stroke-width="2.5"/><text x="172" y="121" font-size="12" text-anchor="middle">一覧</text><rect x="200" y="106" width="50" height="22" rx="3" fill="#fff6c8" stroke="#d9a400"/><text x="225" y="121" font-size="11" text-anchor="middle">ヒント</text><path d="M178 80 l-6 22 6-4 5 9 4-2-5-9 7-1z" fill="#333"/><text x="140" y="40" font-size="13" text-anchor="middle" fill="#333">画面下の「一覧」ボタンを押す</text></svg>
+      <p>まだ見つけていない言葉は黒塗りで並んでいます。</p></div>
+    <div class="sl"><h4>② 黒塗りの言葉をタップ</h4>
+      <svg viewBox="0 0 280 150"><text x="24" y="34" font-size="12" fill="#666">レベル2　3 / 6</text><rect x="24" y="46" width="56" height="26" rx="13" fill="#fff" stroke="#999"/><text x="52" y="64" font-size="12" text-anchor="middle">見つけた</text><rect x="88" y="46" width="56" height="26" rx="13" fill="#222" stroke="#f2b400" stroke-width="2" stroke-dasharray="4 2"/><rect x="152" y="46" width="56" height="26" rx="13" fill="#222"/><rect x="216" y="46" width="44" height="26" rx="13" fill="#222"/><circle cx="116" cy="59" r="18" fill="none" stroke="#e33" stroke-width="2.5"/><path d="M122 80 l-6 22 6-4 5 9 4-2-5-9 7-1z" fill="#333"/><text x="140" y="130" font-size="12" text-anchor="middle" fill="#333">知りたい言葉を1つ選ぶ</text></svg>
+      <p>ヒントを見たい言葉をタップします。</p></div>
+    <div class="sl"><h4>③ かくれている場所が光る</h4>
+      <svg viewBox="0 0 280 150"><g fill="#ddd"><rect x="30" y="22" width="200" height="9" rx="4"/><rect x="30" y="40" width="220" height="9" rx="4"/><rect x="30" y="58" width="180" height="9" rx="4"/><rect x="30" y="76" width="210" height="9" rx="4"/><rect x="30" y="94" width="190" height="9" rx="4"/><rect x="30" y="112" width="160" height="9" rx="4"/></g><rect x="22" y="52" width="236" height="39" rx="6" fill="rgba(255,221,64,.45)" stroke="#f2b400" stroke-width="2.5"/><text x="140" y="140" font-size="12" text-anchor="middle" fill="#333">この2〜3行のどこかにかくれている</text></svg>
+      <p>スレの中の2〜3行が光ります。どこにあるかは、自分で探そう。</p></div>
+    <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+    <div class="nav"><button type="button" id="tut-prev">もどる</button><button type="button" class="pri" id="tut-next">つぎへ</button></div>
+  </div>
+</div>
+
 <script>
 (function(){
   const SHARE_URL = "https://gaasuu8910.github.io/kakurenbo/kisei/";
@@ -281,6 +322,7 @@
   }
   const OP_NAME = "名無しさん＠帰省中", OP_ID = "Kz7sEi3x";
   const TAB = null;
+  const HINTS = {"とくしま": {"place": "body", "lines": [1, 3], "msg": "光っている行のどこかに、かくれている"}, "とうきょう": {"place": "body", "lines": [1, 3], "msg": "光っている行のどこかに、かくれている"}, "あいち": {"place": "body", "lines": [1, 3], "msg": "光っている行のどこかに、かくれている"}, "ひょうご": {"place": "body", "lines": [4, 6], "msg": "光っている行のどこかに、かくれている"}, "かがわ": {"place": "body", "lines": [4, 6], "msg": "光っている行のどこかに、かくれている"}, "ながさき": {"place": "body", "lines": [6, 8], "msg": "光っている行のどこかに、かくれている"}, "おおいた": {"place": "body", "lines": [7, 9], "msg": "光っている行のどこかに、かくれている"}, "とちぎ": {"place": "body", "lines": [8, 10], "msg": "光っている行のどこかに、かくれている"}, "ふくい": {"place": "body", "lines": [9, 11], "msg": "光っている行のどこかに、かくれている"}, "ふくしま": {"place": "body", "lines": [11, 13], "msg": "光っている行のどこかに、かくれている"}, "やまなし": {"place": "body", "lines": [12, 14], "msg": "光っている行のどこかに、かくれている"}, "こうち": {"place": "body", "lines": [12, 14], "msg": "光っている行のどこかに、かくれている"}, "あきた": {"place": "body", "lines": [13, 15], "msg": "光っている行のどこかに、かくれている"}, "ぐんま": {"place": "body", "lines": [14, 16], "msg": "光っている行のどこかに、かくれている"}, "いしかわ": {"place": "body", "lines": [16, 18], "msg": "光っている行のどこかに、かくれている"}, "ひろしま": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "とやま": {"place": "body", "lines": [16, 18], "msg": "光っている行のどこかに、かくれている"}, "ながの": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "とっとり": {"place": "body", "lines": [18, 20], "msg": "光っている漢字の、下半分だけを見てみよう"}, "さいたま": {"place": "body", "lines": [18, 20], "msg": "光っている行のどこかに、かくれている"}}, HINT_OPEN = "2026-11-19T12:00:00+09:00";
   if (TAB) { const origTitle = document.title; document.addEventListener('visibilitychange', () => { document.title = document.hidden ? TAB.text : origTitle; }); }
   const TWIST = {"posts": [{"name": "名無しさん＠帰省中", "id": "Hn5rWq2c", "text": "ちょっと待て。\n>>1の書き込み、都道府県が20個入ってるよな？\n実家は結構近いって言ってたのに……\n**こいつ、『急がば回れ』って、ラッシュ避けるために日本中ぐるっと遠回りしてるだけじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n今年は3日かかった。\nでも、ずっと座れた。"}]};
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
@@ -456,10 +498,75 @@
       if(!ks.length) continue;
       const got=ks.filter(k=>found.includes(k)).length;
       h+=`<div class="lv ${lv==='EX'?'ex':''}"><h3><span>${name}</span><span>${got} / ${ks.length}</span></h3><div class="chips">`+
-        ks.map(k=> found.includes(k) ? `<span class="chip">${esc(LABEL[k])}</span>` : `<span class="chip bk">${'■'.repeat(Math.max(2,LABEL[k].length))}</span>`).join('')+`</div></div>`;
+        ks.map(k=> found.includes(k) ? `<span class="chip">${esc(LABEL[k])}</span>` : `<span class="chip bk${hintOn&&HINTS[k]?' hintable':''}" data-k="${esc(k)}">${'■'.repeat(Math.max(2,LABEL[k].length))}</span>`).join('')+`</div></div>`;
     }
+    const oth=OTHERS.slice().sort((a,b)=>({new:0,mid:1,done:2}[otherState(a)])-({new:0,mid:1,done:2}[otherState(b)])).slice(0,4);
+    if(oth.length) h+=`<div class="lv oth"><h3><span>ほかのスレも遊ぶ</span></h3>`+oth.map(o=>`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="listmodal">▶ ${esc(o.title)}<span>${ ({done:'クリア済み',mid:'途中',new:'未挑戦'})[otherState(o)] }</span></a>`).join('')+`</div>`;
     body.innerHTML=h;
+    document.querySelector('#list .lsub').textContent = hintOn ? '黒塗りの言葉をタップすると、ヒントが出ます' : '見つけていないものは黒塗りになっています';
   }
+  // ===== ヒント（毎週木曜に解禁） =====
+  const hintOn = !!(window.KK_PREVIEW || (HINT_OPEN && Date.now() >= Date.parse(HINT_OPEN)));
+  function tip(msg){ document.querySelectorAll('.hint-tip').forEach(e=>e.remove()); const d=document.createElement('div'); d.className='hint-tip'; d.textContent=msg; d.onclick=()=>d.remove(); document.body.appendChild(d); setTimeout(()=>d.remove(),7000); }
+  function hlBox(rects){ document.querySelectorAll('.hint-hl').forEach(e=>e.remove()); if(!rects.length) return null;
+    let t=1e9,b=-1e9,l=1e9,r=-1e9; for(const x of rects){ if(!x.width&&!x.height) continue; t=Math.min(t,x.top); b=Math.max(b,x.bottom); l=Math.min(l,x.left); r=Math.max(r,x.right); }
+    if(t>b) return null; const d=document.createElement('div'); d.className='hint-hl';
+    d.style.cssText=`top:${t+scrollY-4}px;left:${l+scrollX-6}px;width:${r-l+12}px;height:${b-t+8}px`; document.body.appendChild(d); setTimeout(()=>d.remove(),9000); return d; }
+  function lineRects(a,b){
+    const op=document.getElementById('op'); const rest=op.querySelector('.omit-rest');
+    const walk=()=>{ const w=document.createTreeWalker(op,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest('.omitbox')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+      let line=0,sN=null,sO=0,eN=null,eO=0,last=null,n; while((n=w.nextNode())){ const t=n.data; for(let i=0;i<t.length;i++){ if(line===a&&!sN){sN=n;sO=i;} if(t[i]==='\n'){ if(line===b){eN=n;eO=i;break;} line++; } } if(eN)break; last=n; }
+      if(!sN) return null; if(!eN){ eN=last||sN; eO=eN.data.length; } return [sN,sO,eN,eO]; };
+    let p=walk(); if(!p) return [];
+    if(rest&&rest.hidden&&(rest.contains(p[0])||rest.contains(p[2]))){ const link=op.querySelector('.omit-link'); if(link) link.click(); p=walk(); if(!p) return []; }
+    const rg=document.createRange(); rg.setStart(p[0],p[1]); rg.setEnd(p[2],p[3]); return [...rg.getClientRects()];
+  }
+  function showHint(k){
+    const h=HINTS[k]; if(!h) return; document.getElementById('list').classList.remove('on'); T('kk_hint',{word:k.slice(0,20), place:h.place});
+    let el=null;
+    if(h.place==='body'){ const first=lineRects(h.lines[0],h.lines[0]); if(first.length) scrollTo({top:first[0].top+scrollY-innerHeight*0.3,behavior:'instant'}); el=hlBox(lineRects(h.lines[0],h.lines[1])); }
+    else if(h.place==='title'){ const t=document.querySelector('h1'); if(t){ t.scrollIntoView({block:'center'}); el=hlBox([t.getBoundingClientRect()]); } }
+    else if(h.place==='head'||h.place==='id'){ const t=document.querySelector('#r1 .head'); if(t){ t.scrollIntoView({block:'center'}); el=hlBox([t.getBoundingClientRect()]); } }
+    else if(h.place==='replies'){ const ps=[...document.querySelectorAll('#thread .post:not(#r1):not([hidden])')]; if(ps.length){ ps[0].scrollIntoView({block:'center'}); el=hlBox(ps.map(p=>p.getBoundingClientRect())); } }
+    tip('💡 ' + h.msg);
+  }
+  const tutEl=document.getElementById('tut'); let tutI=0;
+  function tutShow(i){ const sl=tutEl.querySelectorAll('.sl'), dt=tutEl.querySelectorAll('.dots i'); tutI=Math.max(0,Math.min(sl.length-1,i));
+    sl.forEach((e,j)=>e.classList.toggle('on',j===tutI)); dt.forEach((e,j)=>e.classList.toggle('on',j===tutI));
+    document.getElementById('tut-prev').style.visibility = tutI ? 'visible' : 'hidden';
+    document.getElementById('tut-next').textContent = tutI===sl.length-1 ? '一覧を開いてヒントを見る' : 'つぎへ'; }
+  function openHintList(){ tutEl.classList.remove('on'); renderList(); document.getElementById('list').classList.add('on'); }
+  document.getElementById('tut-prev').onclick=()=>tutShow(tutI-1);
+  document.getElementById('tut-next').onclick=()=>{ if(tutI===tutEl.querySelectorAll('.sl').length-1){ try{localStorage.setItem('kk-hint-tut','1');}catch(e){} openHintList(); } else tutShow(tutI+1); };
+  tutEl.onclick=e=>{ if(e.target===tutEl) tutEl.classList.remove('on'); };
+  document.getElementById('list-body').addEventListener('click',e=>{ const c=e.target.closest('.chip.hintable'); if(c) showHint(c.dataset.k); });
+  const hb=document.getElementById('hint-open');
+  if(HINT_OPEN || window.KK_PREVIEW){ hb.hidden=false;
+    if(!hintOn){ const d=new Date(HINT_OPEN); hb.classList.add('lock'); hb.textContent=`ヒント ${d.getMonth()+1}/${d.getDate()}(木)〜`;
+      hb.onclick=()=>{ T('kk_hint_locked',{}); tip(`ヒントは${d.getMonth()+1}/${d.getDate()}(木)のお昼に解禁。@gaasuuquestion をフォローして見逃さないで`); }; }
+    else { hb.textContent='💡ヒント'; hb.onclick=()=>{ T('kk_hint_open',{pct:pct(found.length)}); let seen=false; try{seen=localStorage.getItem('kk-hint-tut')==='1';}catch(e){} if(seen) openHintList(); else { tutShow(0); tutEl.classList.add('on'); } }; }
+  }
+  // ===== 制覇スタンプ・詰まったときの声かけ =====
+  function updStamp(){ const n=OTHERS.length+1; const d=OTHERS.filter(o=>otherState(o)==='done').length+(found.length>=TOTAL?1:0); const el=document.getElementById('stamp'); if(el&&n>1) el.textContent=`★制覇 ${d}/${n}｜`; }
+  updStamp(); setInterval(updStamp,2000);
+  let lastCnt=found.length, lastAt=Date.now(), stuckShown=false;
+  function showStuck(){
+    stuckShown=true; T('kk_stuck',{pct:pct(found.length), hint: hintOn?1:0});
+    const o=OTHERS.find(x=>otherState(x)==='new')||OTHERS.find(x=>otherState(x)==='mid');
+    const d=new Date(HINT_OPEN||0);
+    const box=document.createElement('div'); box.className='stuck';
+    box.style.bottom=((dockEl?dockEl.offsetHeight:0)+10)+'px';
+    let h='<button class="x" type="button" aria-label="閉じる">×</button><b>🤔 ちょっと詰まった？</b><div class="act">';
+    if(hintOn&&HINT_OPEN) h+='<button type="button" class="hi" data-act="hint">💡 ヒントで、かくれている場所を見る</button>';
+    else if(HINT_OPEN) h+=`<a class="hi" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener" data-act="follow">💡 ヒントは${d.getMonth()+1}/${d.getDate()}(木)のお昼に解禁。フォローして見逃さない</a>`;
+    if(o) h+=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="stuck">▶ ひと息つくなら、こっちのスレも：${esc(o.title)}</a>`;
+    box.innerHTML=h+'</div>'; document.body.appendChild(box);
+    box.querySelector('.x').onclick=()=>box.remove();
+    const hb2=box.querySelector('[data-act="hint"]'); if(hb2) hb2.onclick=()=>{ box.remove(); document.getElementById('hint-open').click(); };
+    const fb=box.querySelector('[data-act="follow"]'); if(fb) fb.addEventListener('click',()=>T('kk_follow',{where:'stuck'}));
+  }
+  setInterval(()=>{ if(found.length!==lastCnt){ lastCnt=found.length; lastAt=Date.now(); return; }
+    if(!stuckShown && found.length<TOTAL && document.visibilityState==='visible' && Date.now()-lastAt>(window.KK_STUCK_MS||120000)) showStuck(); },5000);
   document.getElementById('list-open').onclick=()=>{renderList();document.getElementById('list').classList.add('on');};
   document.getElementById('list-close').onclick=()=>document.getElementById('list').classList.remove('on');
   document.getElementById('list').onclick=e=>{ if(e.target.id==='list') e.currentTarget.classList.remove('on'); };

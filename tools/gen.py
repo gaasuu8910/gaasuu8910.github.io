@@ -32,7 +32,9 @@ def main():
     sp['title'] = MARK.sub(lambda m: m.group(1), title_raw); sp['op_name'] = MARK.sub(lambda m: m.group(1), name_raw)
     marks = sorted(set(x for _, k in MARK.findall(body) for x in k.split('/')) | outer_marks)
     keys = sp['keys']
-    extra_keys = ({sp['op_id_key']} if sp.get('op_id_key') else set()) | ({sp['tab_title']['key']} if sp.get('tab_title') else set())
+    ph_raw = sp.get('placeholder', '')
+    ph_keys = set(x for _, k in MARK.findall(ph_raw) for x in k.split('/'))
+    extra_keys = ({sp['op_id_key']} if sp.get('op_id_key') else set()) | ({sp['tab_title']['key']} if sp.get('tab_title') else set()) | ph_keys
     assert sorted(keys) == sorted(set(marks) | extra_keys), f'keys mismatch: {set(keys) ^ (set(marks) | extra_keys)}'
 
     def mark(m):
@@ -86,6 +88,43 @@ def main():
                            'total': len(osp['keys']), 'counter': osp.get('counter', '個'), 'store': osp['store']})
     except Exception as e:
         print('others skipped:', e)
+    # ヒント（毎週木曜に解禁）: 言葉ごとに「どこを見るか」を作る
+    import datetime
+    blines = body.split('\n'); nb = len(blines)
+    HMSG = {'body': '光っている行のどこかに、かくれている', 'title': 'スレタイ（いちばん上の赤い文字）をよく見てみよう',
+            'head': '1の投稿の名前欄や日付をよく見てみよう', 'id': '1の投稿のIDをよく見てみよう',
+            'replies': '1の投稿だけじゃない。レス（2以降）に目を向けよう', 'late': 'このスレを開いたまま、しばらく待ってみよう',
+            'tab': 'このスレを開いたまま、別のタブに切り替えてみよう', 'input': '書き込み欄の薄い文字を、よく読んでみよう'}
+    hints = {}
+    span = {}
+    for m in MARK.finditer(body):
+        a, b = body[:m.start()].count('\n'), body[:m.end()].count('\n')
+        for k in m.group(2).split('/'):
+            if k in span: span[k] = (min(span[k][0], a), max(span[k][1], b))
+            else: span[k] = (a, b)
+    for k, (a, b) in span.items():
+        if b - a < 1:
+            a0 = max(0, a - (len(k) % 2)); b0 = min(nb - 1, a0 + 2); a0 = max(0, b0 - 2)
+            a, b = a0, b0
+        hints[k] = {'place': 'body', 'lines': [a, b]}
+    for raw, place in ((title_raw, 'title'), (name_raw + date_raw, 'head'), (''.join(r[2] for r in sp.get('replies', [])), 'replies')):
+        for _, kk in MARK.findall(raw):
+            for k in kk.split('/'): hints.setdefault(k, {'place': place})
+    if late:
+        for _, kk in MARK.findall(late['text']):
+            for k in kk.split('/'): hints[k] = {'place': 'late'}
+    if sp.get('op_id_key'): hints[sp['op_id_key']] = {'place': 'id'}
+    if sp.get('tab_title'): hints[sp['tab_title']['key']] = {'place': 'tab'}
+    for k in ph_keys: hints[k] = {'place': 'input'}
+    for k, h in hints.items():
+        h['msg'] = sp.get('hints', {}).get(k) or HMSG[h['place']]
+    hint_open = sp.get('hint_open')
+    if not hint_open:
+        mdt = re.match(r'(\d{4})/(\d{2})/(\d{2})', MARK.sub(lambda m: m.group(1), date_raw))
+        if mdt:
+            d0 = datetime.date(int(mdt.group(1)), int(mdt.group(2)), int(mdt.group(3)))
+            d1 = d0 + datetime.timedelta(days=((3 - d0.weekday()) % 7) or 7)
+            hint_open = d1.isoformat() + 'T12:00:00+09:00'
     t = open(os.path.join(here, 'template.html'), encoding='utf-8').read()
     js = lambda v: json.dumps(v, ensure_ascii=False)
     rep = {
@@ -95,7 +134,7 @@ def main():
         'TOTAL': str(len(keys)), 'RESCOUNT': str(1 + len(sp.get('replies', []))), 'THREAD': '\n'.join(posts),
         'FOOT': html.escape(sp['foot']), 'SHARE_URL': js(sp.get('share_url', '')), 'QUOTE_URL': js(sp.get('quote_url', '')), 'NEXT': html.escape(sp.get('next_schedule', '月・金の21時')), 'KEYS': js(keys),
         'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'GENERIC': js([sp['noun']] + sp.get('generic', [])), 'MISS': sp.get('miss_verb', 'ない'), 'LEVELS': js(sp.get('levels', {})), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
-        'OP_ID_JS': js(sp['op_id']), 'TAB_TITLE': js(sp.get('tab_title')), 'OTHERS': js(others), 'LATE': js(late_info), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
+        'OP_ID_JS': js(sp['op_id']), 'TAB_TITLE': js(sp.get('tab_title')), 'HINTS': js(hints), 'PLACEHOLDER': html.escape(MARK.sub(lambda m: m.group(1), ph_raw) if ph_raw else f"見つけた{sp['noun']}を書き込む"), 'HINT_OPEN': js(hint_open), 'OTHERS': js(others), 'LATE': js(late_info), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
     }
     for k, v in rep.items():
         t = t.replace('{{' + k + '}}', v)
