@@ -124,7 +124,7 @@ def main():
         if mdt:
             d0 = datetime.date(int(mdt.group(1)), int(mdt.group(2)), int(mdt.group(3)))
             d1 = d0 + datetime.timedelta(days=((3 - d0.weekday()) % 7) or 7)
-            hint_open = d1.isoformat() + 'T12:00:00+09:00'
+            hint_open = d1.isoformat() + 'T19:00:00+09:00'
     t = open(os.path.join(here, 'template.html'), encoding='utf-8').read()
     js = lambda v: json.dumps(v, ensure_ascii=False)
     rep = {

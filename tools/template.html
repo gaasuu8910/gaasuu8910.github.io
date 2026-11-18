@@ -512,7 +512,7 @@
   const hb=document.getElementById('hint-open');
   if(HINT_OPEN || window.KK_PREVIEW){ hb.hidden=false;
     if(!hintOn){ const d=new Date(HINT_OPEN); hb.classList.add('lock'); hb.textContent=`ヒント ${d.getMonth()+1}/${d.getDate()}(木)〜`;
-      hb.onclick=()=>{ T('kk_hint_locked',{}); tip(`ヒントは${d.getMonth()+1}/${d.getDate()}(木)のお昼に解禁。@gaasuuquestion をフォローして見逃さないで`); }; }
+      hb.onclick=()=>{ T('kk_hint_locked',{}); tip(`ヒントは${d.getMonth()+1}/${d.getDate()}(木)${d.getHours()}時に解禁。@gaasuuquestion をフォローして見逃さないで`); }; }
     else { hb.textContent='💡ヒント'; hb.onclick=()=>{ T('kk_hint_open',{pct:pct(found.length)}); let seen=false; try{seen=localStorage.getItem('kk-hint-tut')==='1';}catch(e){} if(seen) openHintList(); else { tutShow(0); tutEl.classList.add('on'); } }; }
   }
   // ===== 制覇スタンプ・詰まったときの声かけ =====
@@ -527,7 +527,7 @@
     box.style.bottom=((dockEl?dockEl.offsetHeight:0)+10)+'px';
     let h='<button class="x" type="button" aria-label="閉じる">×</button><b>🤔 ちょっと詰まった？</b><div class="act">';
     if(hintOn&&HINT_OPEN) h+='<button type="button" class="hi" data-act="hint">💡 ヒントで、かくれている場所を見る</button>';
-    else if(HINT_OPEN) h+=`<a class="hi" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener" data-act="follow">💡 ヒントは${d.getMonth()+1}/${d.getDate()}(木)のお昼に解禁。フォローして見逃さない</a>`;
+    else if(HINT_OPEN) h+=`<a class="hi" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener" data-act="follow">💡 ヒントは${d.getMonth()+1}/${d.getDate()}(木)${d.getHours()}時に解禁。フォローして見逃さない</a>`;
     if(o) h+=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="stuck">▶ ひと息つくなら、こっちのスレも：${esc(o.title)}</a>`;
     box.innerHTML=h+'</div>'; document.body.appendChild(box);
     box.querySelector('.x').onclick=()=>box.remove();

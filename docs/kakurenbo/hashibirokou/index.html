@@ -321,7 +321,7 @@
   }
   const OP_NAME = "名無しさん＠園内", OP_ID = "kAWAuSo9";
   const TAB = null;
-  const HINTS = {"へび": {"place": "body", "lines": [0, 2], "msg": "光っている行のどこかに、かくれている"}, "ひょう": {"place": "body", "lines": [0, 2], "msg": "光っている行のどこかに、かくれている"}, "しか": {"place": "body", "lines": [2, 4], "msg": "光っている行のどこかに、かくれている"}, "ぞう": {"place": "body", "lines": [3, 5], "msg": "光っている行のどこかに、かくれている"}, "わに": {"place": "body", "lines": [4, 6], "msg": "光っている行のどこかに、かくれている"}, "ろば": {"place": "body", "lines": [5, 7], "msg": "光っている行のどこかに、かくれている"}, "さい": {"place": "body", "lines": [5, 7], "msg": "光っている行のどこかに、かくれている"}, "ばく": {"place": "body", "lines": [6, 8], "msg": "光っている行のどこかに、かくれている"}, "かば": {"place": "body", "lines": [8, 10], "msg": "光っている行のどこかに、かくれている"}, "とら": {"place": "body", "lines": [9, 11], "msg": "光っている行のどこかに、かくれている"}, "わし": {"place": "body", "lines": [10, 12], "msg": "光っている行のどこかに、かくれている"}, "らくだ": {"place": "body", "lines": [10, 12], "msg": "光っている行のどこかに、かくれている"}, "ぱんだ": {"place": "body", "lines": [11, 13], "msg": "光っている行のどこかに、かくれている"}, "ごりら": {"place": "body", "lines": [12, 14], "msg": "光っている行のどこかに、かくれている"}, "しまうま": {"place": "body", "lines": [14, 16], "msg": "光っている行のどこかに、かくれている"}, "さる": {"place": "body", "lines": [15, 17], "msg": "光っている行のどこかに、かくれている"}, "いるか": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "くま": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "りす": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "かわうそ": {"place": "id", "msg": "1の投稿のIDを、ローマ字として読んでみよう"}}, HINT_OPEN = "2026-11-19T12:00:00+09:00";
+  const HINTS = {"へび": {"place": "body", "lines": [0, 2], "msg": "光っている行のどこかに、かくれている"}, "ひょう": {"place": "body", "lines": [0, 2], "msg": "光っている行のどこかに、かくれている"}, "しか": {"place": "body", "lines": [2, 4], "msg": "光っている行のどこかに、かくれている"}, "ぞう": {"place": "body", "lines": [3, 5], "msg": "光っている行のどこかに、かくれている"}, "わに": {"place": "body", "lines": [4, 6], "msg": "光っている行のどこかに、かくれている"}, "ろば": {"place": "body", "lines": [5, 7], "msg": "光っている行のどこかに、かくれている"}, "さい": {"place": "body", "lines": [5, 7], "msg": "光っている行のどこかに、かくれている"}, "ばく": {"place": "body", "lines": [6, 8], "msg": "光っている行のどこかに、かくれている"}, "かば": {"place": "body", "lines": [8, 10], "msg": "光っている行のどこかに、かくれている"}, "とら": {"place": "body", "lines": [9, 11], "msg": "光っている行のどこかに、かくれている"}, "わし": {"place": "body", "lines": [10, 12], "msg": "光っている行のどこかに、かくれている"}, "らくだ": {"place": "body", "lines": [10, 12], "msg": "光っている行のどこかに、かくれている"}, "ぱんだ": {"place": "body", "lines": [11, 13], "msg": "光っている行のどこかに、かくれている"}, "ごりら": {"place": "body", "lines": [12, 14], "msg": "光っている行のどこかに、かくれている"}, "しまうま": {"place": "body", "lines": [14, 16], "msg": "光っている行のどこかに、かくれている"}, "さる": {"place": "body", "lines": [15, 17], "msg": "光っている行のどこかに、かくれている"}, "いるか": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "くま": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "りす": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "かわうそ": {"place": "id", "msg": "1の投稿のIDを、ローマ字として読んでみよう"}}, HINT_OPEN = "2026-11-19T19:00:00+09:00";
   if (TAB) { const origTitle = document.title; document.addEventListener('visibilitychange', () => { document.title = document.hidden ? TAB.text : origTitle; }); }
   const TWIST = {"posts": [{"name": "名無しさん＠園内", "id": "Pv8dKs3n", "text": "ちょっと待て。\nアイツにしか興味がないって言いながら、>>1の書き込み、動物が20匹かくれてるよな？\n**こいつ、ハシビロコウ待ってる間、ほかの動物ぜんぶ見てるじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n閉園まで粘ると、さすがに暇なんだよ。"}]};
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
@@ -546,7 +546,7 @@
   const hb=document.getElementById('hint-open');
   if(HINT_OPEN || window.KK_PREVIEW){ hb.hidden=false;
     if(!hintOn){ const d=new Date(HINT_OPEN); hb.classList.add('lock'); hb.textContent=`ヒント ${d.getMonth()+1}/${d.getDate()}(木)〜`;
-      hb.onclick=()=>{ T('kk_hint_locked',{}); tip(`ヒントは${d.getMonth()+1}/${d.getDate()}(木)のお昼に解禁。@gaasuuquestion をフォローして見逃さないで`); }; }
+      hb.onclick=()=>{ T('kk_hint_locked',{}); tip(`ヒントは${d.getMonth()+1}/${d.getDate()}(木)${d.getHours()}時に解禁。@gaasuuquestion をフォローして見逃さないで`); }; }
     else { hb.textContent='💡ヒント'; hb.onclick=()=>{ T('kk_hint_open',{pct:pct(found.length)}); let seen=false; try{seen=localStorage.getItem('kk-hint-tut')==='1';}catch(e){} if(seen) openHintList(); else { tutShow(0); tutEl.classList.add('on'); } }; }
   }
   // ===== 制覇スタンプ・詰まったときの声かけ =====
@@ -561,7 +561,7 @@
     box.style.bottom=((dockEl?dockEl.offsetHeight:0)+10)+'px';
     let h='<button class="x" type="button" aria-label="閉じる">×</button><b>🤔 ちょっと詰まった？</b><div class="act">';
     if(hintOn&&HINT_OPEN) h+='<button type="button" class="hi" data-act="hint">💡 ヒントで、かくれている場所を見る</button>';
-    else if(HINT_OPEN) h+=`<a class="hi" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener" data-act="follow">💡 ヒントは${d.getMonth()+1}/${d.getDate()}(木)のお昼に解禁。フォローして見逃さない</a>`;
+    else if(HINT_OPEN) h+=`<a class="hi" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener" data-act="follow">💡 ヒントは${d.getMonth()+1}/${d.getDate()}(木)${d.getHours()}時に解禁。フォローして見逃さない</a>`;
     if(o) h+=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="stuck">▶ ひと息つくなら、こっちのスレも：${esc(o.title)}</a>`;
     box.innerHTML=h+'</div>'; document.body.appendChild(box);
     box.querySelector('.x').onclick=()=>box.remove();
