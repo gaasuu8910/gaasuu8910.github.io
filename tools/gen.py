@@ -85,7 +85,7 @@ def main():
             if th['slug'] == os.path.basename(base): continue
             osp = json.load(open(os.path.join(repo, 'threads', th['slug'], 'spec.json'), encoding='utf-8'))
             others.append({'slug': th['slug'], 'title': MARK.sub(lambda m: m.group(1), osp['title']), 'noun': osp['noun'],
-                           'total': len(osp['keys']), 'counter': osp.get('counter', '個'), 'store': osp['store']})
+                           'total': len(osp['keys']), 'counter': osp.get('counter', '個'), 'store': osp['store'], 'diff': osp.get('difficulty', 2), 'no': th.get('no', 0)})
     except Exception as e:
         print('others skipped:', e)
     # ヒント（毎週木曜に解禁）: 言葉ごとに「どこを見るか」を作る

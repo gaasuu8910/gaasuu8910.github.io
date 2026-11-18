@@ -66,13 +66,13 @@ with sync_playwright() as pw:
         print(('OK  ' if ok else 'FAIL'), t['slug'], prog, errs)
         if not ok: failed.append(t['slug'])
         ga_inject(os.path.join(out, 'index.html'))
-        rows.append((t['no'], t['slug'], sp['title'], sp['board'], sp['noun'], len(sp['keys']), t.get('date', '')))
+        rows.append((t['no'], t['slug'], sp['title'], sp['board'], sp['noun'], len(sp['keys']), t.get('date', ''), sp.get('difficulty', 2), sp['store']))
     b.close()
 
 rows.sort(key=lambda r: -r[0])
 items = '\n'.join(
-    f'<li><span class="no">{html.escape(noun)}</span> <a href="./{s}/">{html.escape(title)}</a><div class="meta">{html.escape(board)}／{html.escape(noun)}が{k}個かくれている／{d}</div></li>'
-    for n, s, title, board, noun, k, d in rows)
+    f'<li><span class="no">{html.escape(noun)}</span> <a href="./{s}/">{html.escape(title)}</a> <span class="st" data-store="{st}" data-total="{k}"></span><div class="meta">難易度 <b class="df">{"★"*df}{"☆"*(3-df)}</b>／{html.escape(noun)}が{k}個かくれている／{d}</div></li>'
+    for n, s, title, board, noun, k, d, df, st in rows)
 desc = '2ちゃんねる風の書き込みに、言葉が20個かくれている。何%見つけられる？'
 index = f'''<!DOCTYPE html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -92,15 +92,17 @@ li{{padding:12px 4px;border-bottom:1px dashed #ccc;font-size:16px}}
 a{{color:#00e}}
 .meta{{font-size:12px;color:#666;margin-top:2px}}
 .foot{{margin-top:28px;font-size:12px;color:#666}}
+.df{{color:#d08a00}}
+.st{{font-size:11px;padding:1px 7px;border-radius:9px;margin-left:4px}}.st.done{{background:#e2f3e2;color:#2a7a2a}}.st.mid{{background:#fff3c4;color:#8a6a00}}.st.new{{background:#eee;color:#777}}
 </style></head><body><div class="w">
 <div class="lead">■ かくれんぼスレ ■ 過去ログ一覧（どれからでも遊べます）</div>
 <h1>かくれんぼスレ</h1>
-<div class="lead">{desc}<br>毎週 {SCHEDULE} 更新｜<a href="https://x.com/intent/follow?screen_name=gaasuuquestion">@gaasuuquestion をフォロー</a></div>
+<div class="lead">{desc}<br>毎週 {SCHEDULE} 更新｜<a href="https://x.com/gaasuuquestion">@gaasuuquestion をフォロー</a></div>
 <ul>
 {items}
 </ul>
 <div class="foot">※各スレッドはフィクションの謎解きゲームです。<br>制作：ガースー/MICHI（<a href="https://x.com/gaasuuquestion">@gaasuuquestion</a>）</div>
-</div></body></html>'''
+</div><script>document.querySelectorAll('.st[data-store]').forEach(e=>{{let n=0;try{{n=(JSON.parse(localStorage.getItem(e.dataset.store)||'[]')||[]).length}}catch(x){{}}const t=+e.dataset.total;const c=n>=t?'done':(n>0?'mid':'new');e.className='st '+c;e.textContent=c==='done'?'クリア済み':(c==='mid'?'途中 '+n+'/'+t:'未挑戦');}});</script></body></html>'''
 open(os.path.join(DOCS, 'kakurenbo', 'index.html'), 'w', encoding='utf-8').write(index)
 ga_inject(os.path.join(DOCS, 'kakurenbo', 'index.html'))
 open(os.path.join(DOCS, 'index.html'), 'w', encoding='utf-8').write(

@@ -426,14 +426,18 @@
 
   // ほかのスレへの導線（このスレを見ている人はこんなスレも見ています）
   const OTHERS = {{OTHERS}};
+  const stars=n=>'★'.repeat(n||2)+'☆'.repeat(3-(n||2));
   function otherState(o){ let n=0; try{ n=(JSON.parse(localStorage.getItem(o.store)||'[]')||[]).length; }catch(e){} return n>=o.total?'done':(n>0?'mid':'new'); }
   function renderOthers(){
     if(!OTHERS.length) return;
     const ul=document.getElementById('others-list'); ul.innerHTML='';
-    OTHERS.forEach(o=>{ const st=otherState(o); const lab=st==='done'?'クリア済み':(st==='mid'?'途中':'未挑戦');
+    const rank={new:0,mid:1,done:2};
+    const shown=OTHERS.slice().sort((a,b)=>rank[otherState(a)]-rank[otherState(b)]||(b.no||0)-(a.no||0)).slice(0,3);
+    shown.forEach(o=>{ const st=otherState(o); const lab=st==='done'?'クリア済み':(st==='mid'?'途中':'未挑戦');
       const li=document.createElement('li');
-      li.innerHTML=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="list">${esc(o.title)}</a><span class="st ${st}">${lab}</span><span class="om">${esc(o.noun)}が${o.total}${esc(o.counter)}かくれている</span>`;
+      li.innerHTML=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="list">${esc(o.title)}</a><span class="st ${st}">${lab}</span><span class="om">${esc(o.noun)}が${o.total}${esc(o.counter)}かくれている｜難易度${stars(o.diff)}</span>`;
       ul.appendChild(li); });
+    const all=document.createElement('li'); all.innerHTML=`<a href="../" data-slug="index" data-where="list">▶ すべてのスレを見る（全${OTHERS.length+1}本・難易度つき）</a>`; ul.appendChild(all);
     document.getElementById('others').hidden=false;
     const more=document.getElementById('clear-more'); more.querySelectorAll('a').forEach(a=>a.remove());
     const left=OTHERS.filter(o=>otherState(o)!=='done').slice(0,3);
