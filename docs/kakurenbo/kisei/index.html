@@ -451,7 +451,7 @@
       replyBox.querySelectorAll('.sharenow').forEach(a=>{a.href=document.getElementById('share').href; a.addEventListener('click',()=>T('kk_share',{where:'reply', pct: pct(found.length)}));});
       const exNew = toks.map(t=>alias[norm(t)]).find(k=>k && SPECIAL[k] && lines.length && found.includes(k) && k===newKeys.find(x=>x===k));
       if (exNew) exEffect(exNew);
-      if (lastNew) document.querySelector(`.n[data-k="${lastNew}"]`).scrollIntoView({behavior:'smooth', block:'center'});
+      if (lastNew){ const fe=document.querySelector(`.n[data-k="${lastNew}"]`); if(fe) fe.scrollIntoView({behavior:'smooth', block:'center'}); }
       if (lastNew && found.length>=TOTAL) T('kk_clear', {sec: Math.round((Date.now()-T0)/1000)});
       findFx(newKeys.length);
       if (lastNew && found.length>=TOTAL) { if (TWIST && TWIST.posts) setTimeout(runTwist, 900); else setTimeout(()=>document.getElementById('clear').classList.add('on'), 1200); }
