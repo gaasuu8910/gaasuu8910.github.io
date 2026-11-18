@@ -140,6 +140,8 @@
   .clear .more b{display:block;color:var(--title);margin-bottom:4px}
   .clear .more a{display:block;color:var(--link);font-weight:bold;text-decoration:none;padding:3px 0}
   .omit-link{color:var(--link);text-decoration:underline;font-size:.92em}
+  .late.tw-new{animation:twin .6s ease}
+  .newres{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#d00;color:#fff;font-weight:bold;font-size:14px;padding:8px 16px;border-radius:20px;z-index:60;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
   .inv{color:var(--bg)} .inv .n.found,.inv .n.reveal{color:var(--ink)}
   .twdim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;letter-spacing:6px;animation:twfade .4s}
   @keyframes twfade{from{opacity:0}to{opacity:1}}
@@ -192,7 +194,7 @@
   <div class="dock-in">
     <div class="reply" id="reply" hidden></div>
     <div class="prog"><span id="prog-text">0 / {{TOTAL}}（0%）</span><div class="bar"><i id="prog-bar"></i></div><button type="button" class="lbtn" id="list-open">一覧</button><a class="xbtn" id="share" href="#" target="_blank" rel="noopener">Xに投稿</a></div>
-    <div class="nextline">次スレは毎週 {{NEXT}}｜<a href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">フォローして見逃さない</a></div>
+    <div class="nextline">次スレは毎週 {{NEXT}}｜<a href="../" data-slug="index" data-where="dock">過去スレ一覧</a>｜<a href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">フォローして見逃さない</a></div>
     <form id="f" autocomplete="off">
       <input type="text" id="msg" placeholder="見つけた{{NOUN}}を書き込む" enterkeyhint="send">
       <button type="submit" class="post-btn">書き込む</button>
@@ -229,6 +231,7 @@
   const TOTAL = Object.keys(KEYS).length;
   const LABEL = {{LABEL}};
   const NEAR = {{NEAR}};
+  const GENERIC = {{GENERIC}};
   const LEVELS = {{LEVELS}};
   const SPECIAL = {{SPECIAL}};
   const T = (n,p={}) => { try { if (window.gtag) gtag('event', n, Object.assign({thread: location.pathname.split('/').filter(x=>x&&x!=='index.html').pop()||''}, p)); } catch(e){} };
@@ -242,6 +245,8 @@
     setTimeout(()=>fx.remove(),3200);
   }
   const OP_NAME = {{OP_NAME_JS}}, OP_ID = {{OP_ID_JS}};
+  const TAB = {{TAB_TITLE}};
+  if (TAB) { const origTitle = document.title; document.addEventListener('visibilitychange', () => { document.title = document.hidden ? TAB.text : origTitle; }); }
   const TWIST = {{TWIST}};
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
   let AC=null; const ac=()=>{ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; };
@@ -291,12 +296,13 @@
   const norm = s => s.normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0)-0x60)).replace(/[\sー〜～・!！?？。.]/g,'');
   const alias = {};
   for (const k in KEYS) for (const a of KEYS[k]) alias[norm(a)] = k;
+  const generic = new Set(GENERIC.map(norm));
 
   let found = [];
   try { found = JSON.parse(localStorage.getItem({{STORE}})||'[]').filter(k=>k in KEYS); } catch(e){}
   const save = () => { try { localStorage.setItem({{STORE}}, JSON.stringify(found)); } catch(e){} };
 
-  let resNo = 4;
+  let resNo = document.querySelectorAll('#thread .post:not([hidden])').length;
   const esc = s => s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const pct = n => Math.round(n/TOTAL*100);
 
@@ -337,15 +343,17 @@
     input.value = '';
     if (!tried){ tried = true; T('kk_first_submit', {sec: Math.round((Date.now()-T0)/1000)}); }
     const myNo = ++resNo;
-    const words = raw.split(/[、,，\s\/／・]+/).map(norm).filter(Boolean);
+    const toks = raw.split(/[、,，\s\/／・]+/).filter(t=>norm(t));
     const lines = []; let lastNew = null; const newKeys = [];
-    for (const w of words){
+    for (const t of toks){
+      const w = norm(t);
       const k = alias[w];
       if (k){
         if (found.includes(k)) lines.push(`${LABEL[k]} → 既出`);
         else { found.push(k); lastNew = k; newKeys.push(k); T('kk_found', {word: k, level: SPECIAL[k] ? 'EX' : String(LEVELS[k]||1), count: found.length, sec: Math.round((Date.now()-T0)/1000)}); lines.push(SPECIAL[k] ? `<span class="rainbow">★ ${LABEL[k]} → ${SPECIAL[k]}</span>` : `<span class="ok">${LABEL[k]} → ${okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
-      } else if (NEAR[w]) { T('kk_near', {word: w.slice(0,20)}); lines.push(/ないようだ$/.test(NEAR[w]) ? NEAR[w] : `${esc(w)} → ${NEAR[w]}`); }
-      else { lines.push(`${esc(w)}…は{{MISS}}ようだ`); T('kk_miss', {word: w.slice(0,20)}); }
+      } else if (generic.has(w)) { T('kk_generic', {word: w.slice(0,20)}); lines.push(`${esc(t)} → 具体的な{{NOUN}}の名前を探そう`);
+      } else if (NEAR[w]) { T('kk_near', {word: w.slice(0,20)}); lines.push(/ないようだ$/.test(NEAR[w]) ? NEAR[w] : `${esc(t)} → ${NEAR[w]}`); }
+      else { lines.push(`${esc(t)}…は{{MISS}}ようだ`); T('kk_miss', {word: w.slice(0,20)}); }
     }
     save();
     replyBox.hidden = false;
@@ -364,7 +372,7 @@
       replyBox.innerHTML += `<div class="head" style="margin-top:4px">${opNo} 名前：<span class="nm">${OP_NAME}</span> ID:${OP_ID}（&gt;&gt;1）</div><div><span class="anc">&gt;&gt;${myNo}</span><br>${html}</div>`;
       paint(lastNew);
       replyBox.querySelectorAll('.sharenow').forEach(a=>{a.href=document.getElementById('share').href; a.addEventListener('click',()=>T('kk_share',{where:'reply', pct: pct(found.length)}));});
-      const exNew = words.map(w=>alias[w]).find(k=>k && SPECIAL[k] && lines.length && found.includes(k) && k===newKeys.find(x=>x===k));
+      const exNew = toks.map(t=>alias[norm(t)]).find(k=>k && SPECIAL[k] && lines.length && found.includes(k) && k===newKeys.find(x=>x===k));
       if (exNew) exEffect(exNew);
       if (lastNew) document.querySelector(`.n[data-k="${lastNew}"]`).scrollIntoView({behavior:'smooth', block:'center'});
       if (lastNew && found.length>=TOTAL) T('kk_clear', {sec: Math.round((Date.now()-T0)/1000)});
@@ -398,6 +406,12 @@
   // 2ch風の「省略されました」: 押すと続きを表示（再読み込みで畳み直し）
   document.querySelectorAll('.omit-link').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault();
     const box=a.closest('.omitbox'), rest=box&&box.nextElementSibling; if(rest) rest.hidden=false; if(box) box.remove(); T('kk_omit_open',{}); }));
+  // 時間差レス: ページを開いて数分たつと新しい書き込みが付く
+  const LATE = {{LATE}};
+  function showLate(anim){ const el=document.getElementById('late'); if(!el||!el.hidden) return; resNo++; el.querySelector('.no').textContent=resNo; el.hidden=false;
+    document.getElementById('rescount').textContent=Math.max(+document.getElementById('rescount').textContent,resNo);
+    if(anim){ el.classList.add('tw-new'); playSfx('post'); vib(40); const b=document.createElement('div'); b.className='newres'; b.textContent='新着レス 1件'; b.onclick=()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); b.remove(); }; document.body.appendChild(b); setTimeout(()=>b.remove(),8000); T('kk_late',{}); } }
+  if(LATE){ setTimeout(()=>showLate(true), LATE.after_sec*1000); setInterval(()=>{ if(found.includes(LATE.key)) showLate(false); },1000); if(found.includes(LATE.key)) showLate(false); }
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
   const LVDEF=[['EX','★ EX 高難度隠し','ひとひねりある隠し方。見つけられたら上級者'],[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる']];
   function renderList(){

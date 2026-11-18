@@ -25,13 +25,15 @@ def main():
             out.append(html.escape(text[last:m.start()])); out.append(f'<span class="n" data-k="{html.escape(m.group(2))}">{html.escape(m.group(1))}</span>'); last = m.end()
         return ''.join(out) + html.escape(text[last:])
     title_raw, name_raw, date_raw = sp['title'], sp['op_name'], sp['op_date']
-    reply_raw = ''.join(r[2] for r in sp.get('replies', []))
+    late = sp.get('late_reply')
+    reply_raw = ''.join(r[2] for r in sp.get('replies', [])) + (late['text'] if late else '')
     outer_marks = set(k for _, k in MARK.findall(title_raw + name_raw + date_raw + reply_raw))
     sp['op_date'] = MARK.sub(lambda m: m.group(1), date_raw)
     sp['title'] = MARK.sub(lambda m: m.group(1), title_raw); sp['op_name'] = MARK.sub(lambda m: m.group(1), name_raw)
     marks = sorted(set(x for _, k in MARK.findall(body) for x in k.split('/')) | outer_marks)
     keys = sp['keys']
-    assert sorted(keys) == sorted(set(marks) | ({sp['op_id_key']} if sp.get('op_id_key') else set())), f'keys mismatch: {set(keys) ^ set(marks)}'
+    extra_keys = ({sp['op_id_key']} if sp.get('op_id_key') else set()) | ({sp['tab_title']['key']} if sp.get('tab_title') else set())
+    assert sorted(keys) == sorted(set(marks) | extra_keys), f'keys mismatch: {set(keys) ^ (set(marks) | extra_keys)}'
 
     def mark(m):
         inner = html.escape(m.group(1))
@@ -65,6 +67,15 @@ def main():
       <div class="body">{mk_html(text)}</div>
     </div>''')
 
+    late_info = None
+    if late:
+        lk = MARK.findall(late['text'])[0][1]
+        late_info = {'after_sec': late.get('after_sec', 240), 'key': lk}
+        posts.append(f'''    <div class="post late" id="late" hidden>
+      <div class="head"><span class="no"></span> 名前：<span class="nm">{nm}</span> 投稿日：{late['date']} ID:{late['id']}</div>
+      <div class="body">{mk_html(late['text'])}</div>
+    </div>''')
+
     others = []
     try:
         repo = os.path.dirname(here)
@@ -83,8 +94,8 @@ def main():
         'TITLE': html.escape(sp['title']), 'TITLE_HTML': mk_html(title_raw), 'BOARD': html.escape(sp['board']), 'NOUN': html.escape(sp['noun']),
         'TOTAL': str(len(keys)), 'RESCOUNT': str(1 + len(sp.get('replies', []))), 'THREAD': '\n'.join(posts),
         'FOOT': html.escape(sp['foot']), 'SHARE_URL': js(sp.get('share_url', '')), 'QUOTE_URL': js(sp.get('quote_url', '')), 'NEXT': html.escape(sp.get('next_schedule', '月・金の21時')), 'KEYS': js(keys),
-        'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'MISS': sp.get('miss_verb', 'ない'), 'LEVELS': js(sp.get('levels', {})), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
-        'OP_ID_JS': js(sp['op_id']), 'OTHERS': js(others), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
+        'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'GENERIC': js([sp['noun']] + sp.get('generic', [])), 'MISS': sp.get('miss_verb', 'ない'), 'LEVELS': js(sp.get('levels', {})), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
+        'OP_ID_JS': js(sp['op_id']), 'TAB_TITLE': js(sp.get('tab_title')), 'OTHERS': js(others), 'LATE': js(late_info), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
     }
     for k, v in rep.items():
         t = t.replace('{{' + k + '}}', v)
