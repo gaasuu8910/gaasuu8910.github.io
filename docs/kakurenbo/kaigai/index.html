@@ -82,7 +82,16 @@
   .clear .follow{display:block;margin-top:10px;border:2px solid #000;color:#000;text-decoration:none;font-weight:bold;font-size:15px;padding:11px;border-radius:6px;background:#fff}
   .clear .follow:hover{background:#f3f3f3}
   .clear .next{margin-top:8px;font-size:13px;color:#555}
-  .nextline{font-size:12px;color:#555;margin:-2px 0 8px}
+  .lfoot{margin-top:12px;border-top:1px dashed #ccc;padding-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+  .lfoot a{flex:1 1 140px;text-align:center;padding:9px 8px;border:2px solid #000;border-radius:8px;color:#000;text-decoration:none;font-weight:bold;background:#fff}
+  .lfoot .lf-follow{background:#000;color:#fff}
+  .oth-all{font-size:12px;text-align:right;color:#666 !important;font-weight:normal !important}
+  .lfoot .lnext{width:100%;text-align:center;color:#666;font-size:12px}
+  .hintask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+  .hintask .b{background:#fff;border:3px solid #f2b400;border-radius:14px;max-width:360px;width:100%;padding:20px 18px 16px;text-align:center;animation:pop .3s ease-out}
+  .hintask h3{margin:0 0 6px;font-size:20px}.hintask p{margin:0 0 14px;font-size:14px;line-height:1.6;color:#444}
+  .hintask .yes{display:block;width:100%;font:inherit;font-weight:bold;font-size:16px;padding:12px;border-radius:8px;border:0;background:#f2b400;color:#000;cursor:pointer}
+  .hintask .no{margin-top:8px;font:inherit;font-size:13px;background:none;border:0;color:#777;text-decoration:underline;cursor:pointer}
   .nextline a{color:#00e}
   .exhint{font-size:13px;color:#7a3dbd}
   .exhint b{color:#7a3dbd}
@@ -264,8 +273,7 @@
 <div class="dock">
   <div class="dock-in">
     <div class="reply" id="reply" hidden></div>
-    <div class="prog"><span id="prog-text">0 / 20（0%）</span><div class="bar"><i id="prog-bar"></i></div><button type="button" class="lbtn" id="list-open">一覧</button><button type="button" class="lbtn hbtn" id="hint-open" hidden>ヒント</button><a class="xbtn" id="share" href="#" target="_blank" rel="noopener">Xに投稿</a></div>
-    <div class="nextline"><span class="stamp" id="stamp"></span>次スレは毎週 火・金・日の21時｜<a href="../" data-slug="index" data-where="dock">過去スレ一覧</a>｜<a href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">フォローして見逃さない</a></div>
+    <div class="prog"><span id="prog-text">0 / 20（0%）</span><div class="bar"><i id="prog-bar"></i></div><button type="button" class="lbtn" id="list-open">一覧</button><button type="button" class="lbtn hbtn" id="hint-open" hidden>💡ヒント</button><a class="xbtn" id="share" href="#" target="_blank" rel="noopener">Xに投稿</a></div>
     <form id="f" autocomplete="off">
       <input type="text" id="msg" placeholder="見つけた国名を書き込む" enterkeyhint="send">
       <button type="submit" class="post-btn">書き込む</button>
@@ -277,11 +285,11 @@
   <div class="box">
     <div class="k">■ かくれんぼスレ</div>
     <h2>全20個 クリア！</h2>
-    <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です。<br>スレは毎週火・金・日の21時に立てるから、アカウントをフォローしてまた来てくれ」</div>
+    <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です」</div>
     <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xでクリア報告</a>
     <a class="follow" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
-    <div class="more" id="clear-more" hidden><b>まだ遊んでないスレ</b></div>
-    <div class="next">次スレは毎週 火・金・日の21時 に立ちます</div>
+    <div class="next">次スレは毎週 火・金・日の21時</div>
+    <div class="more" id="clear-more" hidden><b>次はこれ</b></div>
     <button class="close" id="clear-close" type="button">閉じる</button>
   </div>
 </div>
@@ -291,6 +299,7 @@
     <div class="lh"><b>隠れているもの一覧</b><button type="button" id="list-close" aria-label="閉じる">×</button></div>
     <div class="lsub">見つけていないものは黒塗りになっています</div>
     <div id="list-body"></div>
+    <div class="lfoot"><span class="stamp" id="stamp"></span><a class="lf-follow" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">🔔 次スレを受け取る（フォロー）</a><div class="lnext">次スレは毎週 火・金・日の21時</div></div>
   </div>
 </div>
 
@@ -417,9 +426,20 @@
     document.getElementById('prog-text').textContent = `${n} / ${TOTAL}（${pct(n)}%）`;
     document.getElementById('prog-bar').style.width = pct(n)+'%';
     document.getElementById('found-info').textContent = `隠れ国名 ${n}/${TOTAL}`;
-    const text = n>=TOTAL ? `掲示板に隠された国名を、${TOTAL}個ぜんぶ見つけた。\n#かくれんぼスレ`
+    const TITLES = {"perfect": "パスポートがスタンプで埋まった人", "noex": "あと一か国で世界一周", "high": "乗り継ぎの達人", "mid": "機内食を楽しみに乗る人", "low": "空港で迷子"};
+    const exKeys = Object.keys(SPECIAL), exLeft = exKeys.some(k=>!found.includes(k));
+    const tier = n>=TOTAL ? 'perfect' : (n===TOTAL-exKeys.length && exLeft && exKeys.length) ? 'noex' : n>=Math.ceil(TOTAL*0.75) ? 'high' : n>=Math.ceil(TOTAL*0.4) ? 'mid' : 'low';
+    const rows = [1,2,3].map(lv=>{ const ks=Object.keys(KEYS).filter(k=>!SPECIAL[k] && (LEVELS[k]||1)===lv); return ks.length ? `L${lv} `+ks.map(k=>found.includes(k)?'🟩':'⬜').sort().reverse().join('') : ''; }).filter(Boolean);
+    if (exKeys.length) rows.push('EX '+exKeys.map(k=>found.includes(k)?'🌈':'⬛').join(''));
+    const head = `かくれんぼスレ【国名】`;
+    const ttl = TITLES[tier] ? `称号：${TITLES[tier]}\n` : '';
+    const v2 = window.KK_PREVIEW || Date.now() >= Date.parse('2026-11-22T21:00:00+09:00'); // 称号と色マスは日曜21時から
+    const text = !v2 ? (n>=TOTAL ? `掲示板に隠された国名を、${TOTAL}個ぜんぶ見つけた。\n#かくれんぼスレ`
       : n===0 ? `掲示板に国名が${TOTAL}個かくれているらしい。\n#かくれんぼスレ`
-      : `掲示板に隠された国名、${n}/${TOTAL}まで見つけた。\nあと${TOTAL-n}個がどうしても見つからない…\n#かくれんぼスレ`;
+      : `掲示板に隠された国名、${n}/${TOTAL}まで見つけた。\nあと${TOTAL-n}個がどうしても見つからない…\n#かくれんぼスレ`)
+      : n>=TOTAL ? `${head} ${TOTAL}/${TOTAL}\n${ttl}${rows.join('\n')}\n#かくれんぼスレ`
+      : n===0 ? `掲示板に国名が${TOTAL}個かくれているらしい。\n#かくれんぼスレ`
+      : `${head} ${n}/${TOTAL}\n${ttl}${rows.join('\n')}\nあと${TOTAL-n}個、どこにある…？\n#かくれんぼスレ`;
     document.getElementById('list-open').classList.toggle('exleft', n>0 && Object.keys(SPECIAL).some(k=>!found.includes(k)));
     document.getElementById('share').classList.toggle('hot', n>=Math.ceil(TOTAL*0.8) && n<TOTAL);
     const p = new URLSearchParams({text});
@@ -498,7 +518,7 @@
     const all=document.createElement('li'); all.innerHTML=`<a href="../" data-slug="index" data-where="list">▶ すべてのスレを見る（全${OTHERS.length+1}本・難易度つき）</a>`; ul.appendChild(all);
     document.getElementById('others').hidden=false;
     const more=document.getElementById('clear-more'); more.querySelectorAll('a').forEach(a=>a.remove());
-    const left=OTHERS.filter(o=>otherState(o)!=='done').slice(0,3);
+    const left=OTHERS.filter(o=>otherState(o)!=='done').slice(0,1);
     left.forEach(o=>{ const a=document.createElement('a'); a.href=`../${o.slug}/`; a.dataset.slug=o.slug; a.dataset.where='clear'; a.textContent='▶ '+o.title; more.appendChild(a); });
     more.hidden=!left.length;
   }
@@ -528,13 +548,16 @@
         ks.map(k=> found.includes(k) ? `<span class="chip">${esc(LABEL[k])}</span>` : `<span class="chip bk${hintOn&&HINTS[k]?' hintable':''}" data-k="${esc(k)}">${'■'.repeat(Math.max(2,LABEL[k].length))}</span>`).join('')+`</div></div>`;
     }
     if(SECKEYS.length){ const g=SECKEYS.filter(k=>secFound.includes(k)); h+=`<div class="lv ex"><h3><span>㊙ シークレット（20個には数えない）</span><span>${g.length} / ${SECKEYS.length}</span></h3><div class="chips">`+SECKEYS.map(k=> secFound.includes(k) ? `<span class="chip">${esc(Object.values(SECRET).find(v=>v.k===k).label)}</span>` : `<span class="chip bk">？？</span>`).join('')+`</div></div>`; }
-    const oth=OTHERS.slice().sort((a,b)=>({new:0,mid:1,done:2}[otherState(a)])-({new:0,mid:1,done:2}[otherState(b)])).slice(0,4);
-    if(oth.length) h+=`<div class="lv oth"><h3><span>ほかのスレも遊ぶ</span></h3>`+oth.map(o=>`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="listmodal">▶ ${esc(o.title)}<span>${ ({done:'クリア済み',mid:'途中',new:'未挑戦'})[otherState(o)] }</span></a>`).join('')+`</div>`;
+    const oth=OTHERS.slice(0,3);
+    if(oth.length) h+=`<div class="lv oth"><h3><span>過去スレ（新しい順）</span></h3>`+oth.map(o=>`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="listmodal">▶ ${esc(o.title)}<span>${ ({done:'クリア済み',mid:'途中',new:'未挑戦'})[otherState(o)] }</span></a>`).join('')+(OTHERS.length>3?`<a class="oth-all" href="../" data-slug="index" data-where="listmodal">すべての過去スレ（${OTHERS.length}本）</a>`:'')+`</div>`;
     body.innerHTML=h;
     document.querySelector('#list .lsub').textContent = hintOn ? '黒塗りの言葉をタップすると、ヒントが出ます' : '見つけていないものは黒塗りになっています';
   }
   // ===== ヒント（毎週木曜に解禁） =====
-  const hintOn = !!(window.KK_PREVIEW || (HINT_OPEN && Date.now() >= Date.parse(HINT_OPEN)));
+  const HKEY="kaigai-found-v3"+'-hint', HASK="kaigai-found-v3"+'-hintask', HT0="kaigai-found-v3"+'-t0';
+  const lsG=k=>{try{return localStorage.getItem(k);}catch(e){return null;}}, lsS=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
+  let hintOn = !!(window.KK_PREVIEW || lsG(HKEY)==='1');
+  if(!lsG(HT0)) lsS(HT0, String(Date.now()));
   function tip(msg){ document.querySelectorAll('.hint-tip').forEach(e=>e.remove()); const d=document.createElement('div'); d.className='hint-tip'; d.textContent=msg; d.onclick=()=>d.remove(); document.body.appendChild(d); setTimeout(()=>d.remove(),7000); }
   function hlBox(rects){ document.querySelectorAll('.hint-hl').forEach(e=>e.remove()); if(!rects.length) return null;
     let t=1e9,b=-1e9,l=1e9,r=-1e9; for(const x of rects){ if(!x.width&&!x.height) continue; t=Math.min(t,x.top); b=Math.max(b,x.bottom); l=Math.min(l,x.left); r=Math.max(r,x.right); }
@@ -569,25 +592,32 @@
   tutEl.onclick=e=>{ if(e.target===tutEl) tutEl.classList.remove('on'); };
   document.getElementById('list-body').addEventListener('click',e=>{ const c=e.target.closest('.chip.hintable'); if(c) showHint(c.dataset.k); });
   const hb=document.getElementById('hint-open');
-  if(HINT_OPEN || window.KK_PREVIEW){ hb.hidden=false;
-    if(!hintOn){ const d=new Date(HINT_OPEN); hb.classList.add('lock'); hb.textContent=`ヒント ${d.getMonth()+1}/${d.getDate()}(木)〜`;
-      hb.onclick=()=>{ T('kk_hint_locked',{}); tip(`ヒントは${d.getMonth()+1}/${d.getDate()}(木)${d.getHours()}時に解禁。@gaasuuquestion をフォローして見逃さないで`); }; }
-    else { hb.textContent='💡ヒント'; hb.onclick=()=>{ T('kk_hint_open',{pct:pct(found.length)}); let seen=false; try{seen=localStorage.getItem('kk-hint-tut')==='1';}catch(e){} if(seen) openHintList(); else { tutShow(0); tutEl.classList.add('on'); } }; }
+  const hasHints = Object.keys(HINTS||{}).length>0;
+  function openHintFlow(){ T('kk_hint_open',{pct:pct(found.length)}); let seen=false; try{seen=localStorage.getItem('kk-hint-tut')==='1';}catch(e){} if(seen) openHintList(); else { tutShow(0); tutEl.classList.add('on'); } }
+  function askHint(via){
+    if(document.querySelector('.hintask')) return;
+    T('kk_hint_ask',{via, pct:pct(found.length)});
+    const d=document.createElement('div'); d.className='hintask';
+    d.innerHTML='<div class="b"><h3>💡 ヒントを見る？</h3><p>一覧の黒塗りの言葉をタップすると、<br>かくれている場所が光ります。</p><button type="button" class="yes">見る</button><button type="button" class="no">まだ見ない</button></div>';
+    document.body.appendChild(d);
+    d.querySelector('.yes').onclick=()=>{ d.remove(); lsS(HKEY,'1'); hintOn=true; T('kk_hint_unlock',{via}); openHintFlow(); };
+    d.querySelector('.no').onclick=()=>{ d.remove(); lsS(HASK,'no'); T('kk_hint_later',{via}); tip('ヒントボタンからいつでも解禁できます'); };
   }
+  if(hasHints){ hb.hidden=false; hb.onclick=()=> hintOn ? openHintFlow() : askHint('button'); }
+  setInterval(()=>{ if(!hasHints||hintOn||lsG(HASK)||found.length>=TOTAL||document.visibilityState!=='visible') return;
+    if(Date.now()-Number(lsG(HT0)||Date.now()) >= (window.KK_HINT_MS||600000)) askHint('timer'); }, 5000);
   // ===== 制覇スタンプ・詰まったときの声かけ =====
-  function updStamp(){ const n=OTHERS.length+1; const d=OTHERS.filter(o=>otherState(o)==='done').length+(found.length>=TOTAL?1:0); const el=document.getElementById('stamp'); if(el&&n>1) el.textContent=`★制覇 ${d}/${n}｜`; }
+  function updStamp(){ const n=OTHERS.length+1; const d=OTHERS.filter(o=>otherState(o)==='done').length+(found.length>=TOTAL?1:0); const el=document.getElementById('stamp'); if(el&&n>1) el.textContent=`★制覇 ${d}/${n}`; }
   updStamp(); setInterval(updStamp,2000);
   let lastCnt=found.length, lastAt=Date.now(), stuckShown=false;
   function showStuck(){
     stuckShown=true; T('kk_stuck',{pct:pct(found.length), hint: hintOn?1:0});
     const o=OTHERS.find(x=>otherState(x)==='new')||OTHERS.find(x=>otherState(x)==='mid');
-    const d=new Date(HINT_OPEN||0);
     const box=document.createElement('div'); box.className='stuck';
     box.style.bottom=((dockEl?dockEl.offsetHeight:0)+10)+'px';
     let h='<button class="x" type="button" aria-label="閉じる">×</button><b>🤔 ちょっと詰まった？</b><div class="act">';
-    if(hintOn&&HINT_OPEN) h+='<button type="button" class="hi" data-act="hint">💡 ヒントで、かくれている場所を見る</button>';
-    else if(HINT_OPEN) h+=`<a class="hi" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener" data-act="follow">💡 ヒントは${d.getMonth()+1}/${d.getDate()}(木)${d.getHours()}時に解禁。フォローして見逃さない</a>`;
-    if(o) h+=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="stuck">▶ ひと息つくなら、こっちのスレも：${esc(o.title)}</a>`;
+    if(hasHints) h+='<button type="button" class="hi" data-act="hint">💡 ヒントで、かくれている場所を見る</button>';
+    else if(o) h+=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="stuck">▶ ひと息つくなら、こっちのスレも：${esc(o.title)}</a>`;
     box.innerHTML=h+'</div>'; document.body.appendChild(box);
     box.querySelector('.x').onclick=()=>box.remove();
     const hb2=box.querySelector('[data-act="hint"]'); if(hb2) hb2.onclick=()=>{ box.remove(); document.getElementById('hint-open').click(); };
@@ -600,7 +630,7 @@
   document.getElementById('list').onclick=e=>{ if(e.target.id==='list') e.currentTarget.classList.remove('on'); };
   document.getElementById('share').addEventListener('click',()=>T('kk_share',{where:'dock', pct: pct(found.length)}));
   document.getElementById('share2').addEventListener('click',()=>T('kk_share',{where:'clear', pct: pct(found.length)}));
-  document.querySelectorAll('a[href="https://x.com/gaasuuquestion"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow',{where: a.closest('#clear') ? 'clear' : 'dock'})));
+  document.querySelectorAll('a[href="https://x.com/gaasuuquestion"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow',{where: a.closest('#clear') ? 'clear' : a.closest('#list') ? 'list' : 'dock'})));
   document.getElementById('list-open').addEventListener('click',()=>T('kk_list_open',{pct: pct(found.length)}));
   let left=false; document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden' && !left){ left=true; T('kk_leave',{pct: pct(found.length), sec: Math.round((Date.now()-T0)/1000), tried: tried?1:0}); } });
   if (window.KK_PREVIEW && TWIST && TWIST.posts){ // 確認用ページだけ: 20個見つけた状態から演出を再生
