@@ -26,7 +26,8 @@ def main():
         return ''.join(out) + html.escape(text[last:])
     title_raw, name_raw, date_raw = sp['title'], sp['op_name'], sp['op_date']
     late = sp.get('late_reply')
-    reply_raw = ''.join(r[2] for r in sp.get('replies', [])) + (late['text'] if late else '')
+    end1000 = sp.get('end_1000')
+    reply_raw = ''.join(r[2] for r in sp.get('replies', [])) + (late['text'] if late else '') + (end1000['text'] if end1000 else '')
     outer_marks = set(k for _, k in MARK.findall(title_raw + name_raw + date_raw + reply_raw))
     sp['op_date'] = MARK.sub(lambda m: m.group(1), date_raw)
     sp['title'] = MARK.sub(lambda m: m.group(1), title_raw); sp['op_name'] = MARK.sub(lambda m: m.group(1), name_raw)
@@ -34,7 +35,7 @@ def main():
     keys = sp['keys']
     ph_raw = sp.get('placeholder', '')
     ph_keys = set(x for _, k in MARK.findall(ph_raw) for x in k.split('/'))
-    extra_keys = ({sp['op_id_key']} if sp.get('op_id_key') else set()) | ({sp['tab_title']['key']} if sp.get('tab_title') else set()) | ph_keys
+    extra_keys = ({sp['op_id_key']} if sp.get('op_id_key') else set()) | ({sp['tab_title']['key']} if sp.get('tab_title') else set()) | ph_keys | ({sp['twist']['key']} if sp.get('twist',{}).get('key') else set()) | ({sp['scratch']['key']} if sp.get('scratch') else set()) | ({sp['mirror']['key']} if sp.get('mirror') else set()) | ({m[1] for m in MARK.findall(sp['mirror'].get('button',''))} if sp.get('mirror') else set())
     assert sorted(keys) == sorted(set(marks) | extra_keys), f'keys mismatch: {set(keys) ^ (set(marks) | extra_keys)}'
 
     def mark(m):
@@ -53,6 +54,18 @@ def main():
         op_html = (a + '<span class="omitbox"><br><a href="#" class="omit-link">省略されました・・全てを読むにはここを押してください</a></span>'
                    + '<span class="omit-rest" hidden>' + b + '</span>')
 
+    if sp.get('scratch'):
+        S = sp['scratch']
+        card = lambda inner, cv: f'<div class="sc-card"><div class="sc-h">{html.escape(S.get("name","スクラッチ"))}</div><div class="sc-win">{inner}</div>{cv}</div>'
+        op_html += ('<div class="scratch">' + card('ハズレ', '') + card('ハズレ', '')
+                    + card(f'<span class="n" data-k="{html.escape(S["key"])}">{html.escape(S["label"])}</span>', '<canvas class="sc-cv"></canvas>') + '</div>')
+    if sp.get('mirror'):
+        M = sp['mirror']
+        mirror_div = f'<div class="mirror"><span class="n mtxt" data-k="{html.escape(M["key"])}">{html.escape(M["text"])}</span></div>'
+        if M.get('button'):
+            op_html += f'<button type="button" class="imgbtn" onclick="openImg()">🖼 画像を開く：{mk_html(M["button"])}</button><div class="imgmodal" id="imgmodal" onclick="this.classList.remove(\'on\')"><div class="imgbox">{mirror_div}<div class="imgclose">タップで閉じる</div></div></div>'
+        else:
+            op_html += mirror_div
     nm = mk_html(name_raw)
     op_id_html = html.escape(sp['op_id'])
     if sp.get('op_id_key'):
@@ -78,6 +91,18 @@ def main():
       <div class="body">{mk_html(late['text'])}</div>
     </div>''')
 
+    if end1000:
+        ek = MARK.findall(end1000['text'])[-1][1]
+        posts.append('    <div class="post skip">（中略）</div>')
+        posts.append(f'''    <div class="post">
+      <div class="head"><span class="no">1000</span> 名前：<span class="nm">{nm}</span> 投稿日：{end1000['date']} ID:{end1000['id']}</div>
+      <div class="body">{mk_html(end1000['text'])}</div>
+    </div>''')
+        posts.append(f'''    <div class="post">
+      <div class="head"><span class="no">1001</span> 名前：<span class="nm" style="color:#c00">1001</span> 投稿日：Over 1000 Thread</div>
+      <div class="body"><span class="n" data-k="{ek}">こ</span>のスレッドは1000を超えました。
+もう書けないので、新しいスレッドを立ててくださいです。。。</div>
+    </div>''')
     others = []
     try:
         repo = os.path.dirname(here)
@@ -131,7 +156,7 @@ def main():
         'DESC': html.escape(f"この掲示板のどこかに、{sp['noun']}が{len(keys)}個隠れています。何%見つけられる？ #かくれんぼスレ"),
         'PAGE_URL': html.escape(sp.get('page_url', '')),
         'TITLE': html.escape(sp['title']), 'TITLE_HTML': mk_html(title_raw), 'BOARD': html.escape(sp['board']), 'NOUN': html.escape(sp['noun']),
-        'TOTAL': str(len(keys)), 'RESCOUNT': str(1 + len(sp.get('replies', []))), 'THREAD': '\n'.join(posts),
+        'TOTAL': str(len(keys)), 'RESCOUNT': ('1001' if sp.get('end_1000') else str(1 + len(sp.get('replies', [])))), 'THREAD': '\n'.join(posts),
         'FOOT': html.escape(sp['foot']), 'SHARE_URL': js(sp.get('share_url', '')), 'QUOTE_URL': js(sp.get('quote_url', '')), 'NEXT': html.escape(sp.get('next_schedule', '月・金の21時')), 'KEYS': js(keys),
         'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'GENERIC': js([sp['noun']] + sp.get('generic', [])), 'MISS': sp.get('miss_verb', 'ない'), 'LEVELS': js(sp.get('levels', {})), 'SPECIAL': js(sp.get('special', {})), 'OP_NAME_JS': js(sp['op_name']),
         'OP_ID_JS': js(sp['op_id']), 'TAB_TITLE': js(sp.get('tab_title')), 'HINTS': js(hints), 'PLACEHOLDER': html.escape(MARK.sub(lambda m: m.group(1), ph_raw) if ph_raw else f"見つけた{sp['noun']}を書き込む"), 'HINT_OPEN': js(hint_open), 'OTHERS': js(others), 'LATE': js(late_info), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
