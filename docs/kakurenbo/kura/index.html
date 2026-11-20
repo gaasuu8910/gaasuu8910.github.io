@@ -327,6 +327,9 @@
   const GENERIC = ["寿司ネタ", "すし", "すしねた"];
   const LEVELS = {"ぶり": 1, "たこ": 2, "いわし": 1, "えび": 1, "いくら": 2, "にしん": 3, "みるがい": 3, "うなぎ": 3, "とろ": 1, "はまち": 3, "あじ": 2, "さんま": 3, "まぐろ": 2, "うに": 3, "ほたて": 3, "とびこ": 2, "えんがわ": 3, "いか": 3, "たい": 1};
   const SPECIAL = {"たまご": "高難度の隠しに気づいたか。"};
+  const SECRET = {}; // 20個に数えないシークレット
+  const SECKEYS = [...new Set(Object.values(SECRET).map(v=>v.k))];
+  let secFound = []; try { secFound = JSON.parse(localStorage.getItem("kura-found-v9"+'-sec')||'[]'); } catch(e){}
   const T = (n,p={}) => { try { if (window.gtag) gtag('event', n, Object.assign({thread: location.pathname.split('/').filter(x=>x&&x!=='index.html').pop()||''}, p)); } catch(e){} };
   const T0 = Date.now(); let tried = false;  // 高難度隠し: {key: 発見時の>>1のセリフ}
   function exEffect(k){
@@ -448,6 +451,9 @@
       if (k){
         if (found.includes(k)) lines.push(`${LABEL[k]} → 既出`);
         else { found.push(k); lastNew = k; newKeys.push(k); T('kk_found', {word: k, level: SPECIAL[k] ? 'EX' : String(LEVELS[k]||1), count: found.length, sec: Math.round((Date.now()-T0)/1000)}); lines.push(SPECIAL[k] ? `<span class="rainbow">★ ${LABEL[k]} → ${SPECIAL[k]}</span>` : `<span class="ok">${LABEL[k]} → ${okLines[Math.floor(Math.random()*okLines.length)]}</span>`); }
+      } else if (SECRET[w]) { const sc=SECRET[w];
+        if (secFound.includes(sc.k)) lines.push(`${esc(sc.label)} → 既出（シークレット）`);
+        else { secFound.push(sc.k); try{ localStorage.setItem("kura-found-v9"+'-sec', JSON.stringify(secFound)); }catch(e){} T('kk_secret', {word: sc.k}); lines.push(`<span class="rainbow">㊙ ${esc(sc.label)} → ${esc(sc.msg)}</span>`); }
       } else if (generic.has(w)) { T('kk_generic', {word: w.slice(0,20)}); lines.push(`${esc(t)} → 具体的な寿司ネタの名前を探そう`);
       } else if (NEAR[w]) { T('kk_near', {word: w.slice(0,20)}); lines.push(/ないようだ$/.test(NEAR[w]) ? NEAR[w] : `${esc(t)} → ${NEAR[w]}`); }
       else { lines.push(`${esc(t)}…はないようだ`); T('kk_miss', {word: w.slice(0,20)}); }
@@ -524,6 +530,7 @@
       h+=`<div class="lv ${lv==='EX'?'ex':''}"><h3><span>${name}</span><span>${got} / ${ks.length}</span></h3><div class="chips">`+
         ks.map(k=> found.includes(k) ? `<span class="chip">${esc(LABEL[k])}</span>` : `<span class="chip bk${hintOn&&HINTS[k]?' hintable':''}" data-k="${esc(k)}">${'■'.repeat(Math.max(2,LABEL[k].length))}</span>`).join('')+`</div></div>`;
     }
+    if(SECKEYS.length){ const g=SECKEYS.filter(k=>secFound.includes(k)); h+=`<div class="lv ex"><h3><span>㊙ シークレット（20個には数えない）</span><span>${g.length} / ${SECKEYS.length}</span></h3><div class="chips">`+SECKEYS.map(k=> secFound.includes(k) ? `<span class="chip">${esc(Object.values(SECRET).find(v=>v.k===k).label)}</span>` : `<span class="chip bk">？？</span>`).join('')+`</div></div>`; }
     const oth=OTHERS.slice().sort((a,b)=>({new:0,mid:1,done:2}[otherState(a)])-({new:0,mid:1,done:2}[otherState(b)])).slice(0,4);
     if(oth.length) h+=`<div class="lv oth"><h3><span>ほかのスレも遊ぶ</span></h3>`+oth.map(o=>`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="listmodal">▶ ${esc(o.title)}<span>${ ({done:'クリア済み',mid:'途中',new:'未挑戦'})[otherState(o)] }</span></a>`).join('')+`</div>`;
     body.innerHTML=h;
