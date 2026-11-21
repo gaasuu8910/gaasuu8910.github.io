@@ -216,7 +216,7 @@ h1{{color:#c00;font-size:40px;line-height:1.35;margin:22px 0 14px}}
 <div class="rule">この掲示板のどこかに、<b>{noun}が{len(keys)}{cnt}</b>かくれている。</div>
 <div class="prog"><span>0 / {len(keys)}（0%）</span><div class="bar"></div><span>一覧</span></div>
 <div class="box"><div class="in">見つけた{noun}を書き込む</div><div class="btn">書き込む</div></div>
-<div class="ex">※うち1つは、ひとひねりある「高難度隠し」</div>
+{'<div class="ex">※うち1つは、ひとひねりある「高難度隠し」</div>' if sp.get('special') else ''}
 </div></div></body></html>'''
     open(os.path.join(outdir, 'poster.html'), 'w', encoding='utf-8').write(poster)
     og = f'''<!DOCTYPE html><html><head><meta charset="utf-8"><style>
