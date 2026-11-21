@@ -499,8 +499,8 @@
   function renderOthers(){
     if(!OTHERS.length) return;
     const ul=document.getElementById('others-list'); ul.innerHTML='';
-    const rank={new:0,mid:1,done:2};
-    const shown=OTHERS.slice().sort((a,b)=>rank[otherState(a)]-rank[otherState(b)]||(b.no||0)-(a.no||0)).slice(0,3);
+    const rank={new:0,mid:1,done:1}; // 未プレイを新しい順に2本。足りなければプレイ済みの新しい順で埋める
+    const shown=OTHERS.slice().sort((a,b)=>rank[otherState(a)]-rank[otherState(b)]||(b.no||0)-(a.no||0)).slice(0,2);
     shown.forEach(o=>{ const st=otherState(o); const lab=st==='done'?'クリア済み':(st==='mid'?'途中':'未挑戦');
       const li=document.createElement('li');
       li.innerHTML=`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="list">${esc(o.title)}</a><span class="st ${st}">${lab}</span><span class="om">${esc(o.noun)}が${o.total}${esc(o.counter)}かくれている｜難易度${stars(o.diff)}</span>`;
