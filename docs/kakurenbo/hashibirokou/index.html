@@ -240,7 +240,7 @@
 写真も<span class="n" data-k="とら">撮ら</span>ない。
 キョロキョロ見ま<span class="n" data-k="わし">わし</span>たりもしない。
 正面のベンチに座れば、待つのも<span class="n" data-k="らくだ">楽だ</span>。
-腹ごしらえは、売店のメロン<span class="n" data-k="ぱんだ">パンだ</span>。
+腹ごしらえは、園内のメロン<span class="n" data-k="ぱんだ">パンだ</span>。
 食<span class="n" data-k="ごりら">後、リラ</span>ックスして過ごす。
 日が暮れて<span class="n" data-k="しまうま">しまうま</span>で、ひたすら粘る。
 そして、そっと立ち<span class="n" data-k="さる">去る</span>。
@@ -265,7 +265,7 @@
 
   <div class="others" id="others" hidden><div class="oh">このスレを見ている人はこんなスレも見ています</div><ul id="others-list"></ul></div>
 
-  <div class="foot">※このスレッドはフィクションの謎解きゲームです。実在の動物園や飼育方法とは無関係です。<br>制作：ガースー/MICHI（@gaasuuquestion）<br>※アクセス解析にGoogleアナリティクスを使っています（Cookieを使用）</div>
+  <div class="foot">※このスレッドはフィクションのゲームです。実在の動物園や飼育方法とは無関係です。<br>制作：ガースー/MICHI（@gaasuuquestion）<br>※アクセス解析にGoogleアナリティクスを使っています（Cookieを使用）</div>
 </div>
 
 <div class="dock">
@@ -349,7 +349,7 @@
   const TAB = null;
   const HINTS = {"へび": {"place": "body", "lines": [0, 2], "msg": "光っている行のどこかに、かくれている"}, "ひょう": {"place": "body", "lines": [0, 2], "msg": "光っている行のどこかに、かくれている"}, "しか": {"place": "body", "lines": [2, 4], "msg": "光っている行のどこかに、かくれている"}, "ぞう": {"place": "body", "lines": [3, 5], "msg": "光っている行のどこかに、かくれている"}, "わに": {"place": "body", "lines": [4, 6], "msg": "光っている行のどこかに、かくれている"}, "ろば": {"place": "body", "lines": [5, 7], "msg": "光っている行のどこかに、かくれている"}, "さい": {"place": "body", "lines": [5, 7], "msg": "光っている行のどこかに、かくれている"}, "ばく": {"place": "body", "lines": [6, 8], "msg": "光っている行のどこかに、かくれている"}, "かば": {"place": "body", "lines": [8, 10], "msg": "光っている行のどこかに、かくれている"}, "とら": {"place": "body", "lines": [9, 11], "msg": "光っている行のどこかに、かくれている"}, "わし": {"place": "body", "lines": [10, 12], "msg": "光っている行のどこかに、かくれている"}, "らくだ": {"place": "body", "lines": [10, 12], "msg": "光っている行のどこかに、かくれている"}, "ぱんだ": {"place": "body", "lines": [11, 13], "msg": "光っている行のどこかに、かくれている"}, "ごりら": {"place": "body", "lines": [12, 14], "msg": "光っている行のどこかに、かくれている"}, "しまうま": {"place": "body", "lines": [14, 16], "msg": "光っている行のどこかに、かくれている"}, "さる": {"place": "body", "lines": [15, 17], "msg": "光っている行のどこかに、かくれている"}, "いるか": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "くま": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "りす": {"place": "body", "lines": [17, 19], "msg": "光っている行のどこかに、かくれている"}, "かわうそ": {"place": "id", "msg": "1の投稿のIDを、ローマ字として読んでみよう"}}, HINT_OPEN = "2026-11-19T19:00:00+09:00";
   if (TAB) { const origTitle = document.title; document.addEventListener('visibilitychange', () => { document.title = document.hidden ? TAB.text : origTitle; }); }
-  const TWIST = {"posts": [{"name": "名無しさん＠園内", "id": "Pv8dKs3n", "text": "ちょっと待て。\nアイツにしか興味がないって言いながら、>>1の書き込み、動物が20匹かくれてるよな？\n**こいつ、ハシビロコウ待ってる間、ほかの動物ぜんぶ見てるじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたか。\n閉園まで粘ると、さすがに暇なんだよ。"}]};
+  const TWIST = {"posts": [{"name": "名無しさん＠園内", "id": "Pv8dKs3n", "text": "ちょっと待て。\n>>1の書き込み、動物が20匹かくれてるよな？\nアイツだけが目当てって話だったのに……\n**こいつ、ハシビロコウが動くのを待つ間に、ほかの動物ぜんぶ見てるじゃねーか**"}, {"op": true, "text": "{PREV}\nバレたな。\n閉園まで粘ると、さすがに暇なんだよ。"}]};
   // ---- 効果音（WebAudio。書き込みボタンを押した後なので鳴らせる） ----
   let AC=null; const ac=()=>{ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; };
   function beep(f,d=0.08,type='square',vol=0.06,delay=0){ const a=ac(); if(!a) return; try{ const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,a.currentTime+delay); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+delay+d); o.connect(g).connect(a.destination); o.start(a.currentTime+delay); o.stop(a.currentTime+delay+d+0.02);}catch(e){} }
