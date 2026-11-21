@@ -507,7 +507,7 @@
   });
 
   // ほかのスレへの導線（このスレを見ている人はこんなスレも見ています）
-  const OTHERS = [{"slug": "kaigai", "title": "【年末年始の海外旅行を“半額にする方法”、見つけたかもしれん】", "noun": "国名", "total": 20, "counter": "個", "store": "kaigai-found-v3", "diff": 2, "no": 4}, {"slug": "kisei", "title": "【帰省ラッシュを“確実に回避する裏技”、毎年使ってるやついる？】", "noun": "都道府県", "total": 20, "counter": "個", "store": "kisei-found-v2", "diff": 2, "no": 3}, {"slug": "hashibirokou", "title": "【ハシビロコウを“確実に動かす方法”、知ってる人いる？】", "noun": "動物", "total": 20, "counter": "個", "store": "zoo-found-v7", "diff": 2, "no": 2}];
+  const OTHERS = [{"slug": "amatou", "title": "【実家で過ごす3連休、“甘いものめぐり”の計画立てた】", "noun": "花", "total": 5, "counter": "個", "store": "amatou-found-v1", "diff": 1, "no": 4.5}, {"slug": "kaigai", "title": "【年末年始の海外旅行を“半額にする方法”、見つけたかもしれん】", "noun": "国名", "total": 20, "counter": "個", "store": "kaigai-found-v3", "diff": 2, "no": 4}, {"slug": "kisei", "title": "【帰省ラッシュを“確実に回避する裏技”、毎年使ってるやついる？】", "noun": "都道府県", "total": 20, "counter": "個", "store": "kisei-found-v2", "diff": 2, "no": 3}, {"slug": "hashibirokou", "title": "【ハシビロコウを“確実に動かす方法”、知ってる人いる？】", "noun": "動物", "total": 20, "counter": "個", "store": "zoo-found-v7", "diff": 2, "no": 2}];
   const stars=n=>'★'.repeat(n||2)+'☆'.repeat(3-(n||2));
   function otherState(o){ let n=0; try{ n=(JSON.parse(localStorage.getItem(o.store)||'[]')||[]).length; }catch(e){} return n>=o.total?'done':(n>0?'mid':'new'); }
   function renderOthers(){
