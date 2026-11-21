@@ -336,6 +336,7 @@
   const GENERIC = ["寿司ネタ", "すし", "すしねた"];
   const LEVELS = {"ぶり": 1, "たこ": 2, "いわし": 1, "えび": 1, "いくら": 2, "にしん": 3, "みるがい": 3, "うなぎ": 3, "とろ": 1, "はまち": 3, "あじ": 2, "さんま": 3, "まぐろ": 2, "うに": 3, "ほたて": 3, "とびこ": 2, "えんがわ": 3, "いか": 3, "たい": 1};
   const SPECIAL = {"たまご": "高難度の隠しに気づいたか。"};
+  if(!Object.keys(SPECIAL).length) document.querySelectorAll('.exhint').forEach(e=>e.remove());
   const SECRET = {}; // 20個に数えないシークレット
   const SECKEYS = [...new Set(Object.values(SECRET).map(v=>v.k))];
   let secFound = []; try { secFound = JSON.parse(localStorage.getItem("kura-found-v9"+'-sec')||'[]'); } catch(e){}

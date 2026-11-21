@@ -333,6 +333,7 @@
   const GENERIC = ["国名", "こくめい", "くに"];
   const LEVELS = {"どいつ": 1, "いんど": 1, "ろしあ": 2, "まるた": 2, "とるこ": 3, "かんこく": 3, "はいち": 2, "よるだん": 3, "すいす": 1, "ぱなま": 3, "にほん": 1, "ちゅうごく": 3, "しりあ": 3, "けにあ": 2, "ぎりしゃ": 3, "かなだ": 2, "こんご": 1, "いらん": 1, "とんが": 1};
   const SPECIAL = {"いたりあ": "行をまたいで読んだか。高難度の隠しに気づいたか。"};
+  if(!Object.keys(SPECIAL).length) document.querySelectorAll('.exhint').forEach(e=>e.remove());
   const SECRET = {}; // 20個に数えないシークレット
   const SECKEYS = [...new Set(Object.values(SECRET).map(v=>v.k))];
   let secFound = []; try { secFound = JSON.parse(localStorage.getItem("kaigai-found-v3"+'-sec')||'[]'); } catch(e){}

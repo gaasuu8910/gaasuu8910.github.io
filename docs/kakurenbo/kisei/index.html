@@ -332,6 +332,7 @@
   const GENERIC = ["都道府県", "とどうふけん"];
   const LEVELS = {"とくしま": 1, "とうきょう": 3, "あいち": 2, "ひょうご": 1, "かがわ": 2, "ながさき": 3, "おおいた": 3, "とちぎ": 2, "ふくい": 3, "ふくしま": 3, "とやま": 3, "こうち": 3, "あきた": 1, "ぐんま": 3, "いしかわ": 3, "ひろしま": 2, "ながの": 2, "さいたま": 2, "やまなし": 1};
   const SPECIAL = {"とっとり": "高難度の隠しに気づいたか。"};
+  if(!Object.keys(SPECIAL).length) document.querySelectorAll('.exhint').forEach(e=>e.remove());
   const SECRET = {}; // 20個に数えないシークレット
   const SECKEYS = [...new Set(Object.values(SECRET).map(v=>v.k))];
   let secFound = []; try { secFound = JSON.parse(localStorage.getItem("kisei-found-v2"+'-sec')||'[]'); } catch(e){}
