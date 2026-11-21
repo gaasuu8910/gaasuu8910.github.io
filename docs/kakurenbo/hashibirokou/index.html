@@ -285,7 +285,7 @@
     <h2>全20個 クリア！</h2>
     <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です」</div>
     <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xでクリア報告</a>
-    <a class="follow" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
+    <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
     <div class="next">次スレは毎週 火・金・日の21時</div>
     <div class="more" id="clear-more" hidden><b>次はこれ</b></div>
     <button class="close" id="clear-close" type="button">閉じる</button>
@@ -297,7 +297,7 @@
     <div class="lh"><b>隠れているもの一覧</b><button type="button" id="list-close" aria-label="閉じる">×</button></div>
     <div class="lsub">見つけていないものは黒塗りになっています</div>
     <div id="list-body"></div>
-    <div class="lfoot"><span class="stamp" id="stamp"></span><a class="lf-follow" href="https://x.com/gaasuuquestion" target="_blank" rel="noopener">🔔 次スレを受け取る（フォロー）</a><div class="lnext">次スレは毎週 火・金・日の21時</div></div>
+    <div class="lfoot"><span class="stamp" id="stamp"></span><a class="lf-follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">🔔 次スレを受け取る（フォロー）</a><div class="lnext">次スレは毎週 火・金・日の21時</div></div>
   </div>
 </div>
 
@@ -629,7 +629,7 @@
   document.getElementById('list').onclick=e=>{ if(e.target.id==='list') e.currentTarget.classList.remove('on'); };
   document.getElementById('share').addEventListener('click',()=>T('kk_share',{where:'dock', pct: pct(found.length)}));
   document.getElementById('share2').addEventListener('click',()=>T('kk_share',{where:'clear', pct: pct(found.length)}));
-  document.querySelectorAll('a[href="https://x.com/gaasuuquestion"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow',{where: a.closest('#clear') ? 'clear' : a.closest('#list') ? 'list' : 'dock'})));
+  document.querySelectorAll('a[href="https://x.com/intent/follow?screen_name=gaasuuquestion"]').forEach(a=>a.addEventListener('click',()=>T('kk_follow',{where: a.closest('#clear') ? 'clear' : a.closest('#list') ? 'list' : 'dock'})));
   document.getElementById('list-open').addEventListener('click',()=>T('kk_list_open',{pct: pct(found.length)}));
   let left=false; document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden' && !left){ left=true; T('kk_leave',{pct: pct(found.length), sec: Math.round((Date.now()-T0)/1000), tried: tried?1:0}); } });
   if (window.KK_PREVIEW && TWIST && TWIST.posts){ // 確認用ページだけ: 20個見つけた状態から演出を再生
