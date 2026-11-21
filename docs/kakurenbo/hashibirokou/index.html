@@ -82,6 +82,11 @@
   .clear .follow{display:block;margin-top:10px;border:2px solid #000;color:#000;text-decoration:none;font-weight:bold;font-size:15px;padding:11px;border-radius:6px;background:#fff}
   .clear .follow:hover{background:#f3f3f3}
   .clear .next{margin-top:8px;font-size:13px;color:#555}
+  /* フォロー最優先（spec.follow_first） */
+  .clear.ff .follow{background:#1d9bf0;border-color:#1d9bf0;color:#fff;font-size:18px;padding:15px 12px;margin:4px 0 0;box-shadow:0 4px 0 #0c6bad}
+  .clear.ff .follow small{display:block;font-weight:normal;font-size:12px;opacity:.9;margin-top:3px}
+  .clear.ff .ffnote{font-size:13px;color:#333;margin:0 0 8px;line-height:1.5}
+  .clear.ff .big-x{background:#fff;color:#000;border:2px solid #000;font-size:14px;padding:9px;margin-top:12px}
   .lfoot{margin-top:12px;border-top:1px dashed #ccc;padding-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
   .lfoot a{flex:1 1 140px;text-align:center;padding:9px 8px;border:2px solid #000;border-radius:8px;color:#000;text-decoration:none;font-weight:bold;background:#fff}
   .lfoot .lf-follow{background:#000;color:#fff}
@@ -535,6 +540,9 @@
     document.getElementById('rescount').textContent=Math.max(+document.getElementById('rescount').textContent,resNo);
     if(anim){ el.classList.add('tw-new'); playSfx('post'); vib(40); const b=document.createElement('div'); b.className='newres'; b.textContent='新着レス 1件'; b.onclick=()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); b.remove(); }; document.body.appendChild(b); setTimeout(()=>b.remove(),8000); T('kk_late',{}); } }
   if(LATE){ setTimeout(()=>showLate(true), LATE.after_sec*1000); setInterval(()=>{ if(found.includes(LATE.key)) showLate(false); },1000); if(found.includes(LATE.key)) showLate(false); }
+  if (false) { const c=document.getElementById('clear'), bx=c.querySelector('.box'), fl=bx.querySelector('.follow'), sh=document.getElementById('share2');
+    c.classList.add('ff'); fl.innerHTML='＠gaasuuquestion をフォロー<small>次のスレが出たらタイムラインに届きます</small>';
+    const n=document.createElement('div'); n.className='ffnote'; n.textContent='かくれんぼスレは毎週新作。見逃さないように👇'; bx.insertBefore(n, fl); sh.textContent='クリアをポストする'; bx.insertBefore(sh, bx.querySelector('.next').nextSibling); }
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
   const LVDEF=[['EX','★ EX 高難度隠し','ひとひねりある隠し方。見つけられたら上級者'],[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる']];
   function renderList(){
