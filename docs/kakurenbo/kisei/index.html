@@ -78,6 +78,7 @@
   .clear .say{font-size:15px;margin:6px 0 14px;line-height:1.6}
   .clear .big-x{display:block;background:#000;color:#fff;text-decoration:none;font-weight:bold;font-size:17px;padding:13px;border-radius:6px}
   .clear .big-x:hover{background:#333}
+  .clear .quote-sub{display:block;margin-top:8px;font-size:13px;color:#555;text-decoration:underline}
   .clear .close{margin-top:10px;background:none;border:0;color:#777;font:inherit;font-size:13px;cursor:pointer;text-decoration:underline}
   .clear .follow{display:block;margin-top:10px;border:2px solid #000;color:#000;text-decoration:none;font-weight:bold;font-size:15px;padding:11px;border-radius:6px;background:#fff}
   .clear .follow:hover{background:#f3f3f3}
@@ -291,6 +292,7 @@
     <h2>全20個 クリア！</h2>
     <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です」</div>
     <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xでクリア報告</a>
+    <a class="quote-sub" id="share3" href="#" target="_blank" rel="noopener" hidden>引用ポストでシェアする</a>
     <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
     <div class="next">次スレは毎週 火・金・日の21時</div>
     <div class="more" id="clear-more" hidden><b>次はこれ</b></div>
@@ -451,8 +453,13 @@
     const u = QUOTE_URL || SHARE_URL;
     if (u) p.set('url', u);
     const href = 'https://x.com/intent/post?' + p.toString();
-    document.getElementById('share').href = href;
-    document.getElementById('share2').href = href;
+    const rid = (QUOTE_URL||'').match(/status\/(\d+)/);
+    let rhref = href;
+    if (rid) { const rp = new URLSearchParams({text: text + '\nみんなは何個見つけた？', in_reply_to: rid[1]}); rhref = 'https://x.com/intent/post?' + rp.toString(); }
+    document.getElementById('share').href = rhref;
+    document.getElementById('share2').href = rhref;
+    const s3 = document.getElementById('share3'); if (s3) { s3.href = href; s3.hidden = !rid; }
+    if (rid && !document.getElementById('share2').dataset.lab) { const b=document.getElementById('share2'); b.dataset.lab=1; if(!b.querySelector('small')) b.firstChild && (b.firstChild.nodeType===3) && (b.firstChild.textContent='リプでクリア報告する'); }
   }
 
   const okLines = ['正解。よく気づいたな','正解！ それな','せいかい','…バレたか','正解。目がいいな','正解。そこに気づくとは'];
@@ -543,7 +550,7 @@
   if(LATE){ setTimeout(()=>showLate(true), LATE.after_sec*1000); setInterval(()=>{ if(found.includes(LATE.key)) showLate(false); },1000); if(found.includes(LATE.key)) showLate(false); }
   if (false) { const c=document.getElementById('clear'), bx=c.querySelector('.box'), fl=bx.querySelector('.follow'), sh=document.getElementById('share2');
     c.classList.add('ff'); fl.innerHTML='＠gaasuuquestion をフォロー<small>次のスレが出たらタイムラインに届きます</small>';
-    const n=document.createElement('div'); n.className='ffnote'; n.textContent='かくれんぼスレは毎週新作。見逃さないように👇'; bx.insertBefore(n, fl); sh.textContent='クリアをポストする'; bx.insertBefore(sh, bx.querySelector('.next').nextSibling); }
+    const n=document.createElement('div'); n.className='ffnote'; n.textContent='かくれんぼスレは毎週新作。見逃さないように👇'; bx.insertBefore(n, fl); sh.textContent=/status\/\d+/.test(QUOTE_URL||'')?'リプでクリア報告する':'クリアをポストする'; bx.insertBefore(sh, bx.querySelector('.next').nextSibling); const s3=document.getElementById('share3'); if(s3) bx.insertBefore(s3, sh.nextSibling); }
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
   const LVDEF=[['EX','★ EX 高難度隠し','ひとひねりある隠し方。見つけられたら上級者'],[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる']];
   function renderList(){
