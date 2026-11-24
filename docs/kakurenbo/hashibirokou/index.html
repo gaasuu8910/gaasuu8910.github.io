@@ -654,7 +654,7 @@
     T('kk_hint_ask',{via, pct:pct(found.length)});
     const d=document.createElement('div'); d.className='hintask';
     const qid=(QUOTE_URL||'').match(/status\/(\d+)/);
-    const qtext=`かくれんぼスレ【動物】${found.length}/${TOTAL}まで来た。\nここからヒントで攻める…！\n#かくれんぼスレ`;
+    const qtext=`かくれんぼスレ【動物】\nあと${TOTAL-found.length}個がどうしても見つからない…\n#かくれんぼスレ`;
     const qhref='https://x.com/intent/post?'+new URLSearchParams({text:qtext,url:QUOTE_URL||''}).toString();
     d.innerHTML=qid
       ? '<div class="b"><h3>💡 ヒントを解禁する</h3><p>このスレを<b>引用リポスト</b>すると、<br>ヒントが見られるようになります。<br><small>一覧の黒塗りの言葉をタップすると、かくれている場所が光ります</small></p><a class="yes qrt" target="_blank" rel="noopener" href="'+qhref+'">引用リポストしてヒントを見る</a><button type="button" class="no">まだ見ない</button></div>'
