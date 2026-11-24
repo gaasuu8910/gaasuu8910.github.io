@@ -87,7 +87,7 @@
   .clear.ff .follow{background:#1d9bf0;border-color:#1d9bf0;color:#fff;font-size:18px;padding:15px 12px;margin:4px 0 0;box-shadow:0 4px 0 #0c6bad}
   .clear.ff .follow small{display:block;font-weight:normal;font-size:12px;opacity:.9;margin-top:3px}
   .clear.ff .ffnote{font-size:13px;color:#333;margin:0 0 8px;line-height:1.5}
-  .clear.ff .big-x{background:#fff;color:#000;border:2px solid #000;font-size:14px;padding:9px;margin-top:12px}
+  .clear.ff .big-x{background:#000;color:#fff;border:0;font-size:15px;padding:11px;margin-top:12px}
   .lfoot{margin-top:12px;border-top:1px dashed #ccc;padding-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
   .lfoot a{flex:1 1 140px;text-align:center;padding:9px 8px;border:2px solid #000;border-radius:8px;color:#000;text-decoration:none;font-weight:bold;background:#fff}
   .lfoot .lf-follow{background:#000;color:#fff}
@@ -96,6 +96,7 @@
   .hintask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
   .hintask .b{background:#fff;border:3px solid #f2b400;border-radius:14px;max-width:360px;width:100%;padding:20px 18px 16px;text-align:center;animation:pop .3s ease-out}
   .hintask h3{margin:0 0 6px;font-size:20px}.hintask p{margin:0 0 14px;font-size:14px;line-height:1.6;color:#444}
+  .hintask a.yes{text-decoration:none;box-sizing:border-box}
   .hintask .yes{display:block;width:100%;font:inherit;font-weight:bold;font-size:16px;padding:12px;border-radius:8px;border:0;background:#f2b400;color:#000;cursor:pointer}
   .hintask .no{margin-top:8px;font:inherit;font-size:13px;background:none;border:0;color:#777;text-decoration:underline;cursor:pointer}
   .nextline a{color:#00e}
@@ -141,6 +142,10 @@
   .post.tw-new{animation:twin .6s ease-out;background:linear-gradient(90deg,rgba(255,225,77,.35),rgba(255,225,77,0))}
   @keyframes twin{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
   .post .body b{background:#ffe14d;padding:0 2px}
+  .allclear{margin:10px 0 6px;padding:10px 12px;border:2px solid #d4a017;border-radius:8px;background:linear-gradient(#fff8d6,#fff)}
+  .allclear .ac-t{font-weight:bold;font-size:18px;color:#a8740a}
+  .allclear .ac-s{font-size:13px;color:#555;margin:2px 0 8px}
+  .allclear a{display:block;text-align:center;background:#000;color:#fff;font-weight:bold;padding:10px;border-radius:6px;text-decoration:none}
   .others{margin:18px 0 6px;border:1px solid #c9c9c9;background:#fff;border-radius:4px;padding:10px 12px}
   .others .oh{font-weight:bold;font-size:14px;color:var(--title);margin-bottom:6px}
   .others ul{list-style:none;margin:0;padding:0}
@@ -151,6 +156,15 @@
   .others .st{display:inline-block;font-size:11px;padding:0 6px;border-radius:9px;margin-left:6px;background:#eee;color:#555;vertical-align:1px}
   .others .st.new{background:#ffe14d;color:#000}
   .others .st.done{background:#d8f5d0;color:#226622}
+  .clear.ff2 .box{padding:26px 22px 18px}
+  .clear.ff2 .big-x{background:#000;color:#fff;border:0;font-size:17px;padding:14px;margin-top:6px}
+  .clear.ff2 .cs-skip{display:block;margin:12px auto 0;background:none;border:0;color:#777;font:inherit;font-size:13px;cursor:pointer}
+  .clear.ff2 .s2head,.clear.ff2 .follow,.clear.ff2 .next,.clear.ff2 .more,.clear.ff2 .close{display:none}
+  .clear.ff2.s2 .k,.clear.ff2.s2 h2,.clear.ff2.s2 .say,.clear.ff2.s2 .big-x,.clear.ff2.s2 .cs-skip{display:none}
+  .clear.ff2.s2 .s2head{display:block;animation:pop .3s ease-out}.clear.ff2 .s2head b{display:block;font-size:22px;color:var(--title);margin-bottom:6px}.clear.ff2 .s2head span{display:block;font-size:14px;color:#444;line-height:1.6;margin-bottom:14px}
+  .clear.ff2.s2 .follow{display:block;background:#1d9bf0;border-color:#1d9bf0;color:#fff;font-size:18px;padding:15px 12px;box-shadow:0 4px 0 #0c6bad}
+  .clear.ff2.s2 .more{display:block}.clear.ff2.s2 .more[hidden]{display:none}.clear.ff2.s2 .close{display:inline-block}
+  .clear.allc .box{border-color:#d4a017;background:linear-gradient(#fff8d6,#fff 40%)}.clear.allc h2{color:#a8740a}
   .clear .more{margin-top:10px;text-align:left;font-size:13px;border-top:1px dashed #ccc;padding-top:8px}
   .clear .more b{display:block;color:var(--title);margin-bottom:4px}
   .clear .more a{display:block;color:var(--link);font-weight:bold;text-decoration:none;padding:3px 0}
@@ -295,6 +309,7 @@
     <div class="k">■ かくれんぼスレ</div>
     <h2>全20個 クリア！</h2>
     <div class="say">&gt;&gt;1「全部見つかった…だと…？ 完敗です」</div>
+    <div class="allclear" id="allclear" hidden><div class="ac-t">★ 全スレ制覇</div><div class="ac-s" id="ac-s"></div><a id="share-all" href="#" target="_blank" rel="noopener">全スレ制覇をポストする</a></div>
     <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xでクリア報告</a>
     <a class="quote-sub" id="share3" href="#" target="_blank" rel="noopener" hidden>引用ポストでシェアする</a>
     <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
@@ -463,7 +478,8 @@
     document.getElementById('share').href = rhref;
     document.getElementById('share2').href = rhref;
     const s3 = document.getElementById('share3'); if (s3) { s3.href = href; s3.hidden = !rid; }
-    if (rid && !document.getElementById('share2').dataset.lab) { const b=document.getElementById('share2'); b.dataset.lab=1; if(!b.querySelector('small')) b.firstChild && (b.firstChild.nodeType===3) && (b.firstChild.textContent='リプでクリア報告する'); }
+    if (rid && !document.getElementById('share2').dataset.lab) { const b=document.getElementById('share2'); b.dataset.lab=1; if(!b.querySelector('small')) b.firstChild && (b.firstChild.nodeType===3) && (b.firstChild.textContent='クリア報告する'); }
+    try{ renderAllClear(n); }catch(e){}
   }
 
   const okLines = ['正解。よく気づいたな','正解！ それな','せいかい','…バレたか','正解。目がいいな','正解。そこに気づくとは'];
@@ -518,8 +534,22 @@
     }, 500);
   });
 
+
+  // ★全スレ制覇（試作：?allclear=1 か KK_PREVIEW のときだけ表示。本番公開は承認後）
+  function renderAllClear(n){
+    const c=document.getElementById('clear'); if(!c) return;
+    const all = n>=TOTAL && OTHERS.length>0 && OTHERS.every(o=>otherState(o)==='done');
+    c.classList.toggle('allc', all); if(!all) return;
+    const threads=OTHERS.length+1, items=OTHERS.reduce((a,o)=>a+(o.total||0),TOTAL);
+    c.querySelector('h2').textContent='★ 全スレ制覇！';
+    c.querySelector('.say').textContent=`公開中の${threads}スレ・${items}個を、ぜんぶ見つけた。称号「かくれんぼ名人」`;
+    const text=`かくれんぼスレ ★全スレ制覇\n公開中の${threads}スレ・${items}個をぜんぶ見つけた\n称号：かくれんぼ名人\n#かくれんぼスレ`;
+    const rid=(QUOTE_URL||'').match(/status\/(\d+)/); const prm={text}; if(rid) prm.in_reply_to=rid[1]; else prm.url='https://x.com/gaasuuquestion';
+    document.getElementById('share2').href='https://x.com/intent/post?'+new URLSearchParams(prm).toString();
+    document.getElementById('share2').textContent='全スレ制覇を報告する';
+  }
   // ほかのスレへの導線（このスレを見ている人はこんなスレも見ています）
-  const OTHERS = [{"slug": "yamanote", "title": "【忘年会帰りに寝過ごしたら、着いた町がおかしい】", "noun": "山手線の駅", "total": 20, "counter": "駅", "store": "yamanote-found-v1", "diff": 3, "no": 5}, {"slug": "amatou", "title": "【実家で過ごす3連休、“甘いものめぐり”の計画立てた】", "noun": "花", "total": 5, "counter": "個", "store": "amatou-found-v1", "diff": 1, "no": 4.5}, {"slug": "kaigai", "title": "【年末年始の海外旅行を“半額にする方法”、見つけたかもしれん】", "noun": "国名", "total": 20, "counter": "個", "store": "kaigai-found-v3", "diff": 2, "no": 4}, {"slug": "kisei", "title": "【帰省ラッシュを“確実に回避する裏技”、毎年使ってるやついる？】", "noun": "都道府県", "total": 20, "counter": "個", "store": "kisei-found-v2", "diff": 2, "no": 3}, {"slug": "hashibirokou", "title": "【ハシビロコウを“確実に動かす方法”、知ってる人いる？】", "noun": "動物", "total": 20, "counter": "個", "store": "zoo-found-v7", "diff": 2, "no": 2}];
+  const OTHERS = [{"slug": "bonus", "title": "【冬のボーナス、何に使うか全然決まらん】", "noun": "家電", "total": 20, "counter": "個", "store": "bonus-found-v1", "diff": 2, "no": 6}, {"slug": "yamanote", "title": "【忘年会帰りに寝過ごしたら、着いた町がおかしい】", "noun": "山手線の駅", "total": 20, "counter": "駅", "store": "yamanote-found-v1", "diff": 3, "no": 5}, {"slug": "amatou", "title": "【実家で過ごす3連休、“甘いものめぐり”の計画立てた】", "noun": "花", "total": 5, "counter": "個", "store": "amatou-found-v1", "diff": 1, "no": 4.5}, {"slug": "kaigai", "title": "【年末年始の海外旅行を“半額にする方法”、見つけたかもしれん】", "noun": "国名", "total": 20, "counter": "個", "store": "kaigai-found-v3", "diff": 2, "no": 4}, {"slug": "kisei", "title": "【帰省ラッシュを“確実に回避する裏技”、毎年使ってるやついる？】", "noun": "都道府県", "total": 20, "counter": "個", "store": "kisei-found-v2", "diff": 2, "no": 3}, {"slug": "hashibirokou", "title": "【ハシビロコウを“確実に動かす方法”、知ってる人いる？】", "noun": "動物", "total": 20, "counter": "個", "store": "zoo-found-v7", "diff": 2, "no": 2}];
   const stars=n=>'★'.repeat(n||2)+'☆'.repeat(3-(n||2));
   function otherState(o){ let n=0; try{ n=(JSON.parse(localStorage.getItem(o.store)||'[]')||[]).length; }catch(e){} return n>=o.total?'done':(n>0?'mid':'new'); }
   function renderOthers(){
@@ -552,9 +582,20 @@
     document.getElementById('rescount').textContent=Math.max(+document.getElementById('rescount').textContent,resNo);
     if(anim){ el.classList.add('tw-new'); playSfx('post'); vib(40); const b=document.createElement('div'); b.className='newres'; b.textContent='新着レス 1件'; b.onclick=()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); b.remove(); }; document.body.appendChild(b); setTimeout(()=>b.remove(),8000); T('kk_late',{}); } }
   if(LATE){ setTimeout(()=>showLate(true), LATE.after_sec*1000); setInterval(()=>{ if(found.includes(LATE.key)) showLate(false); },1000); if(found.includes(LATE.key)) showLate(false); }
-  if (false) { const c=document.getElementById('clear'), bx=c.querySelector('.box'), fl=bx.querySelector('.follow'), sh=document.getElementById('share2');
-    c.classList.add('ff'); fl.innerHTML='＠gaasuuquestion をフォロー<small>次のスレが出たらタイムラインに届きます</small>';
-    const n=document.createElement('div'); n.className='ffnote'; n.textContent='かくれんぼスレは毎週新作。見逃さないように👇'; bx.insertBefore(n, fl); sh.textContent=/status\/\d+/.test(QUOTE_URL||'')?'リプでクリア報告する':'クリアをポストする'; bx.insertBefore(sh, bx.querySelector('.next').nextSibling); const s3=document.getElementById('share3'); if(s3) bx.insertBefore(s3, sh.nextSibling); }
+  // クリア画面：1画面に主ボタン1つ。①クリア報告（リプ）→ ②フォロー
+  { const c=document.getElementById('clear'), bx=c.querySelector('.box'), fl=bx.querySelector('.follow'), sh=document.getElementById('share2'), s3=document.getElementById('share3');
+    c.classList.add('ff2'); if(s3) s3.remove(); const ac=document.getElementById('allclear'); if(ac) ac.remove();
+    if(!c.classList.contains('allc')) sh.textContent='クリア報告する';
+    const skip=document.createElement('button'); skip.type='button'; skip.className='cs-skip'; skip.textContent='報告せずに次へ ›'; bx.insertBefore(skip, sh.nextSibling);
+    const h=document.createElement('div'); h.className='s2head'; h.innerHTML='<b>次のスレも、遊ぶ？</b><span>新作は毎週 火・金・日の21時。<br>フォローすると、タイムラインに届きます。</span>'; bx.insertBefore(h, fl);
+    fl.innerHTML='＠gaasuuquestion をフォロー';
+    const toS2=()=>{ c.classList.add('s2'); };
+    sh.addEventListener('click',()=>{ T('kk_clear_report',{}); setTimeout(toS2,900); });
+    skip.onclick=()=>{ T('kk_clear_skip',{}); toS2(); };
+    fl.addEventListener('click',()=>{ T('kk_follow',{where:'clear2'}); });
+    new MutationObserver(()=>{ if(!c.classList.contains('on') && c.classList.contains('s2')) c.classList.remove('s2'); }).observe(c,{attributes:true,attributeFilter:['class']});
+    try{ renderAllClear(found.length); }catch(e){}
+  }
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
   const LVDEF=[['EX','★ EX 高難度隠し','ひとひねりある隠し方。見つけられたら上級者'],[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる']];
   function renderList(){
@@ -617,9 +658,14 @@
     if(document.querySelector('.hintask')) return;
     T('kk_hint_ask',{via, pct:pct(found.length)});
     const d=document.createElement('div'); d.className='hintask';
-    d.innerHTML='<div class="b"><h3>💡 ヒントを見る？</h3><p>一覧の黒塗りの言葉をタップすると、<br>かくれている場所が光ります。</p><button type="button" class="yes">見る</button><button type="button" class="no">まだ見ない</button></div>';
+    const qid=(QUOTE_URL||'').match(/status\/(\d+)/);
+    const qtext=`かくれんぼスレ【寿司ネタ】${found.length}/${TOTAL}まで来た。\nここからヒントで攻める…！\n#かくれんぼスレ`;
+    const qhref='https://x.com/intent/post?'+new URLSearchParams({text:qtext,url:QUOTE_URL||''}).toString();
+    d.innerHTML=qid
+      ? '<div class="b"><h3>💡 ヒントを解禁する</h3><p>このスレを<b>引用リポスト</b>すると、<br>ヒントが見られるようになります。<br><small>一覧の黒塗りの言葉をタップすると、かくれている場所が光ります</small></p><a class="yes qrt" target="_blank" rel="noopener" href="'+qhref+'">引用リポストしてヒントを見る</a><button type="button" class="no">まだ見ない</button></div>'
+      : '<div class="b"><h3>💡 ヒントを見る？</h3><p>一覧の黒塗りの言葉をタップすると、<br>かくれている場所が光ります。</p><button type="button" class="yes">見る</button><button type="button" class="no">まだ見ない</button></div>';
     document.body.appendChild(d);
-    d.querySelector('.yes').onclick=()=>{ d.remove(); lsS(HKEY,'1'); hintOn=true; T('kk_hint_unlock',{via}); openHintFlow(); };
+    d.querySelector('.yes').onclick=()=>{ const unlock=()=>{ d.remove(); lsS(HKEY,'1'); hintOn=true; T('kk_hint_unlock',{via, by: qid?'quote':'free'}); openHintFlow(); }; if(qid) setTimeout(unlock,1200); else unlock(); };
     d.querySelector('.no').onclick=()=>{ d.remove(); lsS(HASK,'no'); T('kk_hint_later',{via}); tip('ヒントボタンからいつでも解禁できます'); };
   }
   if(hasHints){ hb.hidden=false; hb.onclick=()=> hintOn ? openHintFlow() : askHint('button'); }
