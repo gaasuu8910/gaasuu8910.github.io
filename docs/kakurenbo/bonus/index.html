@@ -314,6 +314,7 @@
     <div class="allclear" id="allclear" hidden><div class="ac-t">★ 全スレ制覇</div><div class="ac-s" id="ac-s"></div><a id="share-all" href="#" target="_blank" rel="noopener">全スレ制覇をポストする</a></div>
     <a class="big-x" id="share2" href="#" target="_blank" rel="noopener">Xでクリア報告</a>
     <a class="quote-sub" id="share3" href="#" target="_blank" rel="noopener" hidden>引用ポストでシェアする</a>
+    <p class="cmt-note" style="margin:8px 0 0;font-size:12px;color:#666;text-align:center">クリアしたら、ポストにコメントもください</p>
     <a class="follow" href="https://x.com/intent/follow?screen_name=gaasuuquestion" target="_blank" rel="noopener">次のスレをXで受け取る</a>
     <div class="next">次スレは毎週 火・金・日の21時</div>
     <div class="more" id="clear-more" hidden><b>次はこれ</b></div>
@@ -445,7 +446,7 @@
       const k = sp.dataset.k;
       if (found.includes(k)) {
         sp.classList.add('found');
-        if (!sp.querySelector('.tag')) { const t=document.createElement('span'); t.className='tag'; t.textContent=LABEL[k]; sp.appendChild(t); }
+        if (!sp.querySelector('.tag') && document.querySelector(`.n[data-k="${k}"]`)===sp) { const t=document.createElement('span'); t.className='tag'; t.textContent=LABEL[k]; sp.appendChild(t); }
         if (SPECIAL[k]) sp.classList.add('ex');
         if (k===flashKey){ sp.classList.remove('flash'); void sp.offsetWidth; sp.classList.add('flash'); }
       }
