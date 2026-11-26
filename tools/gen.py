@@ -110,9 +110,10 @@ def main():
             if th['slug'] == os.path.basename(base): continue
             osp = json.load(open(os.path.join(repo, 'threads', th['slug'], 'spec.json'), encoding='utf-8'))
             others.append({'slug': th['slug'], 'title': MARK.sub(lambda m: m.group(1), osp['title']), 'noun': osp['noun'],
-                           'total': len(osp['keys']), 'counter': osp.get('counter', '個'), 'store': osp['store'], 'diff': osp.get('difficulty', 2), 'no': th.get('no', 0)})
+                           'total': len(osp['keys']), 'counter': osp.get('counter', '個'), 'store': osp['store'], 'diff': osp.get('difficulty', 2), 'no': th.get('no', 0), 'date': osp['op_date'][:10].replace('/', '-')})
     except Exception as e:
         print('others skipped:', e)
+    allth = [dict(o) for o in others] + [{'slug': os.path.basename(base), 'title': MARK.sub(lambda m: m.group(1), sp['title']), 'noun': sp['noun'], 'total': len(sp['keys']), 'store': sp['store'], 'no': 0, 'date': sp['op_date'][:10].replace('/', '-'), 'me': True}]
     # ヒント（毎週木曜に解禁）: 言葉ごとに「どこを見るか」を作る
     import datetime
     blines = body.split('\n'); nb = len(blines)
@@ -159,7 +160,7 @@ def main():
         'TOTAL': str(len(keys)), 'RESCOUNT': ('1001' if sp.get('end_1000') else str(1 + len(sp.get('replies', [])))), 'THREAD': '\n'.join(posts),
         'FOOT': html.escape(sp['foot']), 'SHARE_URL': js(sp.get('share_url', '')), 'QUOTE_URL': js(sp.get('quote_url', '')), 'NEXT': html.escape(sp.get('next_schedule', '月・金の21時')), 'KEYS': js(keys),
         'LABEL': js(sp['labels']), 'NEAR': js(sp.get('near', {})), 'GENERIC': js([sp['noun']] + sp.get('generic', [])), 'MISS': sp.get('miss_verb', 'ない'), 'LEVELS': js(sp.get('levels', {})), 'SPECIAL': js(sp.get('special', {})), 'TITLES': js(sp.get('titles', {})), 'FOLLOW_FIRST': 'true' if sp.get('follow_first') else 'false', 'SECRET': js({a: {'k': k, 'label': v['label'], 'msg': v['msg']} for k, v in sp.get('secret', {}).items() for a in [k] + v.get('alias', [])}), 'OP_NAME_JS': js(sp['op_name']),
-        'OP_ID_JS': js(sp['op_id']), 'TAB_TITLE': js(sp.get('tab_title')), 'HINTS': js(hints), 'PLACEHOLDER': html.escape(MARK.sub(lambda m: m.group(1), ph_raw) if ph_raw else f"見つけた{sp['noun']}を書き込む"), 'HINT_OPEN': js(hint_open), 'OTHERS': js(others), 'LATE': js(late_info), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
+        'OP_ID_JS': js(sp['op_id']), 'TAB_TITLE': js(sp.get('tab_title')), 'HINTS': js(hints), 'PLACEHOLDER': html.escape(MARK.sub(lambda m: m.group(1), ph_raw) if ph_raw else f"見つけた{sp['noun']}を書き込む"), 'HINT_OPEN': js(hint_open), 'OTHERS': js(others), 'ALLTH': js(allth), 'LATE': js(late_info), 'STORE': js(sp['store']), 'TWIST': js(sp.get('twist')), 'SFX_TWIST': js(sfx_uri('twist.mp3')), 'SFX_POST': js(sfx_uri('post.mp3')),
     }
     for k, v in rep.items():
         t = t.replace('{{' + k + '}}', v)

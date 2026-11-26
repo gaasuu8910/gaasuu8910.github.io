@@ -217,6 +217,7 @@
   .tut .nav button{font:inherit;font-size:14px;padding:8px 16px;border-radius:18px;border:1px solid #bbb;background:#fff;cursor:pointer}
   .tut .nav .pri{background:#e33;border-color:#e33;color:#fff;font-weight:bold}
   .stamp{font-weight:bold;color:#b8860b}
+  .wkb{margin:8px 0;padding:8px 10px;border:1px solid #e3e3e3;border-radius:10px;background:#fafafa}.wkb.comp{border-color:#e0b400;background:#fffbe6}.wkh{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}.wkt{font-size:13px;padding:6px 0;border-top:1px dotted #ccc;color:#333;font-weight:700}.wkt span{font-size:11px;color:#888;margin-left:6px;font-weight:400}.lv.cur h3{color:#c00}.lv.cur h3 span:last-child,.wkh span{white-space:nowrap;flex-shrink:0;margin-left:8px}a.wkpost{display:block;text-align:center;margin-top:6px;padding:8px;border-radius:999px;background:#000;color:#fff !important;font-weight:700;border-top:none !important}
   .lv.oth h3{color:#333}.lv.oth a{display:block;font-size:13px;padding:6px 0;border-top:1px dotted #ccc;color:#06c;text-decoration:none}.lv.oth a span{font-size:11px;color:#888;margin-left:6px}
   .stuck{position:fixed;left:50%;transform:translateX(-50%);width:min(440px,92vw);background:#fff;border:2px solid #f2b400;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);padding:12px 14px;z-index:45;font-size:14px;line-height:1.5}
   .stuck b{display:block;margin-bottom:4px}.stuck .x{position:absolute;top:4px;right:8px;border:0;background:none;font-size:20px;cursor:pointer;color:#888}
@@ -550,7 +551,7 @@
     document.getElementById('share2').textContent='全スレ制覇を報告する';
   }
   // ほかのスレへの導線（このスレを見ている人はこんなスレも見ています）
-  const OTHERS = [{"slug": "bonus", "title": "【冬のボーナス、何に使うか全然決まらん】", "noun": "家電", "total": 20, "counter": "個", "store": "bonus-found-v1", "diff": 2, "no": 6}, {"slug": "yamanote", "title": "【忘年会帰りに寝過ごしたら、着いた町がおかしい】", "noun": "山手線の駅", "total": 20, "counter": "駅", "store": "yamanote-found-v1", "diff": 3, "no": 5}, {"slug": "amatou", "title": "【実家で過ごす3連休、“甘いものめぐり”の計画立てた】", "noun": "花", "total": 5, "counter": "個", "store": "amatou-found-v1", "diff": 1, "no": 4.5}, {"slug": "kaigai", "title": "【年末年始の海外旅行を“半額にする方法”、見つけたかもしれん】", "noun": "国名", "total": 20, "counter": "個", "store": "kaigai-found-v3", "diff": 2, "no": 4}, {"slug": "hashibirokou", "title": "【ハシビロコウを“確実に動かす方法”、知ってる人いる？】", "noun": "動物", "total": 20, "counter": "個", "store": "zoo-found-v7", "diff": 2, "no": 2}, {"slug": "kura", "title": "【くら寿司のびっくらぽん、昔“当たりやすくなる裏技”ありませんでした？】", "noun": "寿司ネタ", "total": 20, "counter": "個", "store": "kura-found-v9", "diff": 1, "no": 1}];
+  const OTHERS = [{"slug": "bonus", "title": "【冬のボーナス、何に使うか全然決まらん】", "noun": "家電", "total": 20, "counter": "個", "store": "bonus-found-v1", "diff": 2, "no": 6, "date": "2026-11-24"}, {"slug": "yamanote", "title": "【忘年会帰りに寝過ごしたら、着いた町がおかしい】", "noun": "山手線の駅", "total": 20, "counter": "駅", "store": "yamanote-found-v1", "diff": 3, "no": 5, "date": "2026-11-22"}, {"slug": "amatou", "title": "【実家で過ごす3連休、“甘いものめぐり”の計画立てた】", "noun": "花", "total": 5, "counter": "個", "store": "amatou-found-v1", "diff": 1, "no": 4.5, "date": "2026-11-21"}, {"slug": "kaigai", "title": "【年末年始の海外旅行を“半額にする方法”、見つけたかもしれん】", "noun": "国名", "total": 20, "counter": "個", "store": "kaigai-found-v3", "diff": 2, "no": 4, "date": "2026-11-20"}, {"slug": "hashibirokou", "title": "【ハシビロコウを“確実に動かす方法”、知ってる人いる？】", "noun": "動物", "total": 20, "counter": "個", "store": "zoo-found-v7", "diff": 2, "no": 2, "date": "2026-11-15"}, {"slug": "kura", "title": "【くら寿司のびっくらぽん、昔“当たりやすくなる裏技”ありませんでした？】", "noun": "寿司ネタ", "total": 20, "counter": "個", "store": "kura-found-v9", "diff": 1, "no": 1, "date": "2026-11-13"}];
   const stars=n=>'★'.repeat(n||2)+'☆'.repeat(3-(n||2));
   function otherState(o){ let n=0; try{ n=(JSON.parse(localStorage.getItem(o.store)||'[]')||[]).length; }catch(e){} return n>=o.total?'done':(n>0?'mid':'new'); }
   function renderOthers(){
@@ -599,6 +600,34 @@
   }
   document.getElementById('clear-close').onclick = ()=> document.getElementById('clear').classList.remove('on');
   const LVDEF=[['EX','★ EX 高難度隠し','ひとひねりある隠し方。見つけられたら上級者'],[1,'レベル1','単語の中に、そのまま読める'],[2,'レベル2','ひらがなで、単語をまたいでいる'],[3,'レベル3','漢字で、単語をまたいでいる']];
+  const ALLTH = [{"slug": "bonus", "title": "【冬のボーナス、何に使うか全然決まらん】", "noun": "家電", "total": 20, "counter": "個", "store": "bonus-found-v1", "diff": 2, "no": 6, "date": "2026-11-24"}, {"slug": "yamanote", "title": "【忘年会帰りに寝過ごしたら、着いた町がおかしい】", "noun": "山手線の駅", "total": 20, "counter": "駅", "store": "yamanote-found-v1", "diff": 3, "no": 5, "date": "2026-11-22"}, {"slug": "amatou", "title": "【実家で過ごす3連休、“甘いものめぐり”の計画立てた】", "noun": "花", "total": 5, "counter": "個", "store": "amatou-found-v1", "diff": 1, "no": 4.5, "date": "2026-11-21"}, {"slug": "kaigai", "title": "【年末年始の海外旅行を“半額にする方法”、見つけたかもしれん】", "noun": "国名", "total": 20, "counter": "個", "store": "kaigai-found-v3", "diff": 2, "no": 4, "date": "2026-11-20"}, {"slug": "hashibirokou", "title": "【ハシビロコウを“確実に動かす方法”、知ってる人いる？】", "noun": "動物", "total": 20, "counter": "個", "store": "zoo-found-v7", "diff": 2, "no": 2, "date": "2026-11-15"}, {"slug": "kura", "title": "【くら寿司のびっくらぽん、昔“当たりやすくなる裏技”ありませんでした？】", "noun": "寿司ネタ", "total": 20, "counter": "個", "store": "kura-found-v9", "diff": 1, "no": 1, "date": "2026-11-13"}, {"slug": "kisei", "title": "【帰省ラッシュを“確実に回避する裏技”、毎年使ってるやついる？】", "noun": "都道府県", "total": 20, "store": "kisei-found-v2", "no": 0, "date": "2026-11-17", "me": true}];
+  const TITLE_PLAIN = (ALLTH.find(t=>t.me)||{}).title||'';
+  function starsOf(t){ if(t.me) return Math.min(found.length,TOTAL); let n=0; try{ const a=JSON.parse(localStorage.getItem(t.store)||'[]'); n=Array.isArray(a)?a.length:0; }catch(e){} return Math.min(n,t.total); }
+  function weekKey(ds){ const d=new Date(ds+'T12:00:00+09:00'); const wd=(d.getUTCDay()+6)%7; const m=new Date(d.getTime()-wd*864e5); return m.toISOString().slice(0,10); }
+  function weeklyHTML(){
+    const others=ALLTH.filter(t=>!t.me);
+    const st=t=>{ const n=starsOf(t); return n>=t.total?'done':(n>0?'mid':'new'); };
+    const rank={new:0,mid:1,done:2};
+    const rec=others.slice().sort((a,b)=>rank[st(a)]-rank[st(b)]||(b.no||0)-(a.no||0)).filter(t=>st(t)!=='done').slice(0,2);
+    let h='';
+    if(rec.length) h+=`<div class="lv oth"><h3><span>おすすめのスレ</span></h3>`+rec.map(t=>`<a href="../${t.slug}/" data-slug="${t.slug}" data-where="listrec">▶ ${esc(t.title)}<span>⭐${starsOf(t)} / ${t.total}</span></a>`).join('')+`</div>`;
+    const wk={}; for(const t of ALLTH){ const k=weekKey(t.date); (wk[k]=wk[k]||[]).push(t); }
+    const keys=Object.keys(wk).sort().reverse();
+    const all=ALLTH.reduce((a,t)=>a+starsOf(t),0), allMax=ALLTH.reduce((a,t)=>a+t.total,0);
+    h+=`<div class="lv oth wk"><h3><span>週ごとのスレ</span><span>累計 ⭐${all} / ${allMax}</span></h3>`;
+    for(const k of keys){
+      const ts=wk[k].sort((a,b)=>a.date<b.date?-1:1);
+      const s=ts.reduce((a,t)=>a+starsOf(t),0), mx=ts.reduce((a,t)=>a+t.total,0);
+      const m=new Date(k+'T00:00:00+09:00'), sun=new Date(m.getTime()+6*864e5);
+      const md=d=>`${d.getMonth()+1}/${d.getDate()}`;
+      const ended=Date.now()>sun.getTime()+21.5*3600e3;
+      const comp=ts.every(t=>starsOf(t)>=t.total) && (ts.length>=3||ended);
+      h+=`<div class="wkb${comp?' comp':''}"><div class="wkh"><b>${md(m)}〜${md(sun)}の週</b><span>⭐${s} / ${mx}</span></div>`+
+        ts.map(t=>t.me?`<div class="wkt me">● ${esc(t.title)}<span>⭐${starsOf(t)} / ${t.total}（今ここ）</span></div>`:`<a href="../${t.slug}/" data-slug="${t.slug}" data-where="listweek">▶ ${esc(t.title)}<span>⭐${starsOf(t)} / ${t.total}${starsOf(t)>=t.total?' ✔':''}</span></a>`).join('')+
+        (comp?`<a class="wkpost" target="_blank" rel="noopener" data-week="${k}" href="https://x.com/intent/post?${new URLSearchParams({text:`かくれんぼスレ【${md(m)}〜${md(sun)}の週】コンプリート！\n⭐${s} / ${mx}\n${ts.map(t=>t.noun).join('・')}\n#かくれんぼスレ`,url:'https://gaasuu8910.github.io/kakurenbo/'}).toString()}">🏆 この週のコンプリートをポストする</a>`:'')+`</div>`;
+    }
+    return h+`</div>`;
+  }
   function renderList(){
     const body=document.getElementById('list-body'); let h='';
     for (const [lv,name,desc] of LVDEF){
@@ -609,8 +638,8 @@
         ks.map(k=> found.includes(k) ? `<span class="chip">${esc(LABEL[k])}</span>` : `<span class="chip bk${hintOn&&HINTS[k]?' hintable':''}" data-k="${esc(k)}">${'■'.repeat(Math.max(2,LABEL[k].length))}</span>`).join('')+`</div></div>`;
     }
     if(SECKEYS.length){ const g=SECKEYS.filter(k=>secFound.includes(k)); h+=`<div class="lv ex"><h3><span>㊙ シークレット（20個には数えない）</span><span>${g.length} / ${SECKEYS.length}</span></h3><div class="chips">`+SECKEYS.map(k=> secFound.includes(k) ? `<span class="chip">${esc(Object.values(SECRET).find(v=>v.k===k).label)}</span>` : `<span class="chip bk">？？</span>`).join('')+`</div></div>`; }
-    const oth=OTHERS.slice(0,3);
-    if(oth.length) h+=`<div class="lv oth"><h3><span>過去スレ（新しい順）</span></h3>`+oth.map(o=>`<a href="../${o.slug}/" data-slug="${o.slug}" data-where="listmodal">▶ ${esc(o.title)}<span>${ ({done:'クリア済み',mid:'途中',new:'未挑戦'})[otherState(o)] }</span></a>`).join('')+(OTHERS.length>3?`<a class="oth-all" href="../" data-slug="index" data-where="listmodal">すべての過去スレ（${OTHERS.length}本）</a>`:'')+`</div>`;
+    h=`<div class="lv cur"><h3><span>遊んでいるスレ：${esc(TITLE_PLAIN)}</span><span>⭐${Math.min(found.length,TOTAL)} / ${TOTAL}</span></h3></div>`+h;
+    h+=weeklyHTML();
     body.innerHTML=h;
     document.querySelector('#list .lsub').textContent = hintOn ? '黒塗りの言葉をタップすると、ヒントが出ます' : '見つけていないものは黒塗りになっています';
   }
