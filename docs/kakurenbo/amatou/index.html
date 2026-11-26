@@ -419,7 +419,11 @@
 
   let found = [];
   try { found = JSON.parse(localStorage.getItem("amatou-found-v1")||'[]').filter(k=>k in KEYS); } catch(e){}
-  const save = () => { try { localStorage.setItem("amatou-found-v1", JSON.stringify(found)); } catch(e){} };
+  // 別タブ・古いタブの記録で上書きしないよう、保存のたびに保存済みの分と合体する（数えない言葉も消さずに残す）
+  const stored = () => { try { const a = JSON.parse(localStorage.getItem("amatou-found-v1")||'[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } };
+  const mergeIn = () => { let n = 0; for (const k of stored()) if (k in KEYS && !found.includes(k)) { found.push(k); n++; } return n; };
+  const save = () => { try { const all = stored(); for (const k of found) if (!all.includes(k)) all.push(k); localStorage.setItem("amatou-found-v1", JSON.stringify(all)); } catch(e){} };
+  window.addEventListener('storage', e => { if (e.key === "amatou-found-v1" && mergeIn() && typeof paint === 'function') paint(null); });
 
   let resNo = Math.max(document.querySelectorAll('#thread .post:not([hidden]):not(.skip)').length, +document.getElementById('rescount').textContent||0);
   const esc = s => s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
