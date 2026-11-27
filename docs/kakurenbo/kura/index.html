@@ -480,7 +480,9 @@
     const href = 'https://x.com/intent/post?' + p.toString();
     const rid = (QUOTE_URL||'').match(/status\/(\d+)/);
     let rhref = href;
-    // クリア報告は引用（2026-11-25 ユーザー決定：リプはスレッド内に埋もれて広がらないため）
+    // クリア報告：投稿当日の24時まではリプ、それ以降は引用（2026-11-27 ユーザー決定）
+    if (rid) { const t0=Number(BigInt(rid[1])>>22n)+1288834974657; const j=new Date(t0+9*3600e3); const mid=Date.UTC(j.getUTCFullYear(),j.getUTCMonth(),j.getUTCDate()+1)-9*3600e3;
+      if (Date.now()<mid) { const rp=new URLSearchParams({text}); rp.set('in_reply_to',rid[1]); rhref='https://x.com/intent/post?'+rp.toString(); } }
     document.getElementById('share').href = rhref;
     document.getElementById('share2').href = rhref;
     const s3 = document.getElementById('share3'); if (s3) { s3.href = href; s3.hidden = !rid; }
