@@ -217,7 +217,7 @@
   .tut .nav button{font:inherit;font-size:14px;padding:8px 16px;border-radius:18px;border:1px solid #bbb;background:#fff;cursor:pointer}
   .tut .nav .pri{background:#e33;border-color:#e33;color:#fff;font-weight:bold}
   .stamp{font-weight:bold;color:#b8860b}
-  .wkb{margin:8px 0;padding:8px 10px;border:1px solid #e3e3e3;border-radius:10px;background:#fafafa}.wkb.comp{border-color:#e0b400;background:#fffbe6}.wkh{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}.wkt{font-size:13px;padding:6px 0;border-top:1px dotted #ccc;color:#333;font-weight:700}.wkt span{font-size:11px;color:#888;margin-left:6px;font-weight:400}.lv.cur h3{color:#c00}.lv.cur h3 span:last-child,.wkh span{white-space:nowrap;flex-shrink:0;margin-left:8px}a.wkpost{display:block;text-align:center;margin-top:6px;padding:8px;border-radius:999px;background:#000;color:#fff !important;font-weight:700;border-top:none !important}
+  .wkb{margin:8px 0;padding:8px 10px;border:1px solid #e3e3e3;border-radius:10px;background:#fafafa}.wkb.comp{border-color:#e0b400;background:#fffbe6}.wkh{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}.wkt{font-size:13px;padding:6px 0;border-top:1px dotted #ccc;color:#333;font-weight:700}.wkt span{font-size:11px;color:#888;margin-left:6px;font-weight:400}.lv.cur h3{color:#c00}.lv.cur h3 span:last-child,.wkh span{white-space:nowrap;flex-shrink:0;margin-left:8px}a.wkpost.sub{background:#fff;color:#000 !important;border:1.5px solid #000 !important}a.wkpost{display:block;text-align:center;margin-top:6px;padding:8px;border-radius:999px;background:#000;color:#fff !important;font-weight:700;border-top:none !important}
   .lv.oth h3{color:#333}.lv.oth a{display:block;font-size:13px;padding:6px 0;border-top:1px dotted #ccc;color:#06c;text-decoration:none}.lv.oth a span{font-size:11px;color:#888;margin-left:6px}
   .stuck{position:fixed;left:50%;transform:translateX(-50%);width:min(440px,92vw);background:#fff;border:2px solid #f2b400;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);padding:12px 14px;z-index:45;font-size:14px;line-height:1.5}
   .stuck b{display:block;margin-bottom:4px}.stuck .x{position:absolute;top:4px;right:8px;border:0;background:none;font-size:20px;cursor:pointer;color:#888}
@@ -630,7 +630,8 @@
       const comp=ts.every(t=>starsOf(t)>=t.total) && (ts.length>=3||ended);
       h+=`<div class="wkb${comp?' comp':''}"><div class="wkh"><b>${md(m)}〜${md(sun)}の週</b><span>⭐${s} / ${mx}</span></div>`+
         ts.map(t=>t.me?`<div class="wkt me">● ${esc(t.title)}<span>⭐${starsOf(t)} / ${t.total}（今ここ）</span></div>`:`<a href="../${t.slug}/" data-slug="${t.slug}" data-where="listweek">▶ ${esc(t.title)}<span>⭐${starsOf(t)} / ${t.total}${starsOf(t)>=t.total?' ✔':''}</span></a>`).join('')+
-        (comp?`<a class="wkpost" target="_blank" rel="noopener" data-week="${k}" href="https://x.com/intent/post?${new URLSearchParams({text:`かくれんぼスレ【${md(m)}〜${md(sun)}の週】コンプリート！\n⭐${s} / ${mx}\n${ts.map(t=>t.noun).join('・')}\n#かくれんぼスレ`,url:'https://gaasuu8910.github.io/kakurenbo/'}).toString()}">🏆 この週のコンプリートをポストする</a>`:'')+`</div>`;
+        (()=>{ const wl=`${md(m)}〜${md(sun)}の週`; const body=comp?`かくれんぼスレ【${wl}】コンプリート！\n⭐${s} / ${mx}\n${ts.map(t=>t.noun).join('・')}\n#かくれんぼスレ`:`かくれんぼスレ【${wl}】\n⭐${s} / ${mx}\n${ts.map(t=>`${t.noun} ${starsOf(t)}/${t.total}`).join('\n')}\n#かくれんぼスレ`;
+          return `<a class="wkpost${comp?'':' sub'}" target="_blank" rel="noopener" data-week="${k}" href="https://x.com/intent/post?${new URLSearchParams({text:body,url:'https://gaasuu8910.github.io/kakurenbo/'}).toString()}">${comp?'🏆 この週のコンプリートをポストする':'この週の⭐をポストする'}</a>`; })()+`</div>`;
     }
     return h+`</div>`;
   }
