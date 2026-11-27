@@ -36,3 +36,7 @@ X：[@gaasuuquestion](https://x.com/gaasuuquestion)　タグ：#かくれんぼ�
 必要なもの：`pip install --break-system-packages pykakasi playwright`、Chrome（または `playwright install chromium`）
 
 - 縦読み（行頭）を使うEXは、その行を14字以内にする。スマホの幅や文字サイズで折り返すと、行頭の並びが崩れて読めなくなる（2026-11-26 ボーナススレで発生）。
+
+## 2文字の語（11/28 ユーザー決定）
+- そのジャンルの2文字の語（ねぎ・かぶ・なす等）は、なるべく本文に入れない（かくす語にも、偶然の出現にも）。
+- どうしても入るときは、2文字の語もかくす語として数に入れる。「2文字は数えない」という扱いはしない。
