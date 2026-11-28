@@ -353,7 +353,7 @@
 <script>
 (function(){
   const SHARE_URL = "https://gaasuu8910.github.io/kakurenbo/kura/";
-  const QUOTE_URL = "https://x.com/gaasuuquestion/status/2121211486949494805"; // 公式ポストのURL（入れると引用ポストになる）
+  let QUOTE_URL = "https://x.com/gaasuuquestion/status/2121211486949494805"; // 公式ポストのURL（入れると引用ポストになる）
   const KEYS = {"ぶり": ["ぶり", "鰤"], "たこ": ["たこ", "蛸", "章魚"], "いわし": ["いわし", "鰯"], "えび": ["えび", "海老", "蝦", "あまえび", "甘海老", "甘えび"], "いくら": ["いくら"], "にしん": ["にしん", "鰊", "鯡"], "みるがい": ["みるがい", "海松貝", "みる貝", "みる"], "とろ": ["とろ", "大とろ", "中とろ", "まぐろとろ"], "はまち": ["はまち", "魬"], "うなぎ": ["うなぎ", "鰻"], "あじ": ["あじ", "鯵", "鰺"], "さんま": ["さんま", "秋刀魚"], "まぐろ": ["まぐろ", "鮪"], "とびこ": ["とびこ", "飛子", "飛び子", "とびっこ", "とびうおのこ"], "えんがわ": ["えんがわ", "縁側"], "いか": ["いか", "烏賊"], "たい": ["たい", "鯛"], "ほたて": ["ほたて", "帆立", "帆立貝", "ほたて貝"], "うに": ["うに", "雲丹", "海胆", "海栗"], "たまご": ["たまご", "玉子", "卵", "玉子焼き", "たまご焼き", "玉"]};
   const TOTAL = Object.keys(KEYS).length;
   const LABEL = {"ぶり": "ブリ", "たこ": "タコ", "いわし": "イワシ", "えび": "海老", "いくら": "いくら", "にしん": "ニシン", "みるがい": "ミルガイ", "とろ": "トロ", "はまち": "ハマチ", "うなぎ": "鰻", "あじ": "アジ", "さんま": "サンマ", "まぐろ": "マグロ", "とびこ": "トビコ", "えんがわ": "エンガワ", "いか": "イカ", "たい": "タイ", "ほたて": "ホタテ", "うに": "ウニ", "たまご": "玉子"};
@@ -445,6 +445,8 @@
   const esc = s => s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const pct = n => Math.round(n/TOTAL*100);
 
+  // 投稿URLが未設定なら、管理ページで登録されたURLを読む（gasu-games.pages.dev/admin/）
+  if(!QUOTE_URL){ const sl=(location.pathname.match(/kakurenbo\/([^\/]+)/)||[])[1]; if(sl) fetch('https://gasu-games.pages.dev/api/post?k=k:'+sl,{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{ if(j&&j.url){ QUOTE_URL=j.url; if(typeof paint==='function') paint(null); } }).catch(()=>{}); }
   function paint(flashKey){
     document.querySelectorAll('.n').forEach(sp=>{
       const k = sp.dataset.k;
@@ -478,6 +480,10 @@
     const p = new URLSearchParams({text});
     const u = QUOTE_URL || SHARE_URL;
     if (u) p.set('url', u);
+    // 引用は「挑戦状」の文にする（2026-11-29）
+    const qtext = n>=TOTAL ? `${head} ${TOTAL}/${TOTAL}\n${ttl}${rows.join('\n')}\nあなたは何個見つけられる？\n#かくれんぼスレ`
+      : n===0 ? text : `${head} ${n}/${TOTAL}\n${ttl}${rows.join('\n')}\nあなたは何個見つけられる？\n#かくれんぼスレ`;
+    if (v2) p.set('text', qtext);
     const href = 'https://x.com/intent/post?' + p.toString();
     const rid = (QUOTE_URL||'').match(/status\/(\d+)/);
     let rhref = href;

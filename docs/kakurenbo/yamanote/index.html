@@ -355,7 +355,7 @@
 <script>
 (function(){
   const SHARE_URL = "https://gaasuu8910.github.io/kakurenbo/yamanote/";
-  const QUOTE_URL = "https://x.com/gaasuuquestion/status/2124473015081836661"; // 公式ポストのURL（入れると引用ポストになる）
+  let QUOTE_URL = "https://x.com/gaasuuquestion/status/2124473015081836661"; // 公式ポストのURL（入れると引用ポストになる）
   const KEYS = {"とうきょう": ["とうきょう", "東京", "トウキョウ", "東京駅"], "えびす": ["えびす", "恵比寿", "エビス", "恵比寿駅"], "しんじゅく": ["しんじゅく", "新宿", "シンジュク", "新宿駅"], "すがも": ["すがも", "巣鴨", "スガモ", "巣鴨駅"], "めじろ": ["めじろ", "目白", "メジロ", "目白駅"], "たばた": ["たばた", "田端", "タバタ", "田端駅"], "うえの": ["うえの", "上野", "ウエノ", "上野駅"], "おおさき": ["おおさき", "大崎", "オオサキ", "大崎駅"], "しんばし": ["しんばし", "新橋", "シンバシ", "新橋駅"], "かんだ": ["かんだ", "神田", "カンダ", "神田駅"], "こまごめ": ["こまごめ", "駒込", "コマゴメ", "駒込駅"], "しぶや": ["しぶや", "渋谷", "シブヤ", "渋谷駅"], "あきはばら": ["あきはばら", "秋葉原", "アキハバラ", "秋葉原駅"], "めぐろ": ["めぐろ", "目黒", "メグロ", "目黒駅"], "おおつか": ["おおつか", "大塚", "オオツカ", "大塚駅"], "よよぎ": ["よよぎ", "代々木", "ヨヨギ", "代々木駅"], "たかだのばば": ["たかだのばば", "高田馬場", "タカダノババ", "高田馬場駅"], "たまち": ["たまち", "田町", "タマチ", "田町駅"], "おかちまち": ["おかちまち", "御徒町", "オカチマチ", "御徒町駅"], "はらじゅく": ["はらじゅく", "原宿", "ハラジュク", "原宿駅"]};
   const TOTAL = Object.keys(KEYS).length;
   const LABEL = {"とうきょう": "東京", "えびす": "恵比寿", "しんじゅく": "新宿", "すがも": "巣鴨", "めじろ": "目白", "たばた": "田端", "うえの": "上野", "おおさき": "大崎", "しんばし": "新橋", "かんだ": "神田", "こまごめ": "駒込", "しぶや": "渋谷", "あきはばら": "秋葉原", "めぐろ": "目黒", "おおつか": "大塚", "よよぎ": "代々木", "たかだのばば": "高田馬場", "たまち": "田町", "おかちまち": "御徒町", "はらじゅく": "原宿"};
@@ -447,6 +447,8 @@
   const esc = s => s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const pct = n => Math.round(n/TOTAL*100);
 
+  // 投稿URLが未設定なら、管理ページで登録されたURLを読む（gasu-games.pages.dev/admin/）
+  if(!QUOTE_URL){ const sl=(location.pathname.match(/kakurenbo\/([^\/]+)/)||[])[1]; if(sl) fetch('https://gasu-games.pages.dev/api/post?k=k:'+sl,{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{ if(j&&j.url){ QUOTE_URL=j.url; if(typeof paint==='function') paint(null); } }).catch(()=>{}); }
   function paint(flashKey){
     document.querySelectorAll('.n').forEach(sp=>{
       const k = sp.dataset.k;
@@ -480,6 +482,10 @@
     const p = new URLSearchParams({text});
     const u = QUOTE_URL || SHARE_URL;
     if (u) p.set('url', u);
+    // 引用は「挑戦状」の文にする（2026-11-29）
+    const qtext = n>=TOTAL ? `${head} ${TOTAL}/${TOTAL}\n${ttl}${rows.join('\n')}\nあなたは何個見つけられる？\n#かくれんぼスレ`
+      : n===0 ? text : `${head} ${n}/${TOTAL}\n${ttl}${rows.join('\n')}\nあなたは何個見つけられる？\n#かくれんぼスレ`;
+    if (v2) p.set('text', qtext);
     const href = 'https://x.com/intent/post?' + p.toString();
     const rid = (QUOTE_URL||'').match(/status\/(\d+)/);
     let rhref = href;
