@@ -168,6 +168,7 @@
   .clear .more{margin-top:10px;text-align:left;font-size:13px;border-top:1px dashed #ccc;padding-top:8px}
   .clear .more b{display:block;color:var(--title);margin-bottom:4px}
   .clear .more a{display:block;color:var(--link);font-weight:bold;text-decoration:none;padding:3px 0}
+  .omit-close{color:var(--link);text-decoration:underline;font-size:.92em}
   .omit-link{color:var(--link);text-decoration:underline;font-size:.92em}
   .late.tw-new{animation:twin .6s ease}
   .newres{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#d00;color:#fff;font-weight:bold;font-size:14px;padding:8px 16px;border-radius:20px;z-index:60;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
@@ -544,7 +545,10 @@
   padDock(); window.addEventListener('resize',padDock); try{ new ResizeObserver(padDock).observe(dockEl); }catch(e){}
   // 2ch風の「省略されました」: 押すと続きを表示（再読み込みで畳み直し）
   document.querySelectorAll('.omit-link').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault();
-    const box=a.closest('.omitbox'), rest=box&&box.nextElementSibling; if(rest) rest.hidden=false; if(box) box.remove(); T('kk_omit_open',{}); }));
+    const box=a.closest('.omitbox'), rest=box&&box.nextElementSibling; if(!rest) return;
+    rest.hidden=false; box.hidden=true; T('kk_omit_open',{});
+    if(!rest.querySelector('.omit-close')){ const c=document.createElement('span'); c.className='omit-close-wrap'; c.innerHTML='<br><a href="#" class="omit-close">▲ たたむ（省略に戻す）</a>'; rest.appendChild(c);
+      c.querySelector('a').addEventListener('click',ev=>{ ev.preventDefault(); rest.hidden=true; box.hidden=false; box.scrollIntoView({block:'center'}); T('kk_omit_close',{}); }); } }));
   // 時間差レス: ページを開いて数分たつと新しい書き込みが付く
   const LATE = {{LATE}};
   function showLate(anim){ const el=document.getElementById('late'); if(!el||!el.hidden) return; resNo++; el.querySelector('.no').textContent=resNo; el.hidden=false;
@@ -623,7 +627,7 @@
     d.style.cssText=`top:${t+scrollY-4}px;left:${l+scrollX-6}px;width:${r-l+12}px;height:${b-t+8}px`; document.body.appendChild(d); setTimeout(()=>d.remove(),9000); return d; }
   function lineRects(a,b){
     const op=document.getElementById('op'); const rest=op.querySelector('.omit-rest');
-    const walk=()=>{ const w=document.createTreeWalker(op,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest('.omitbox')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+    const walk=()=>{ const w=document.createTreeWalker(op,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest('.omitbox,.omit-close-wrap')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
       let line=0,sN=null,sO=0,eN=null,eO=0,last=null,n; while((n=w.nextNode())){ const t=n.data; for(let i=0;i<t.length;i++){ if(line===a&&!sN){sN=n;sO=i;} if(t[i]==='\n'){ if(line===b){eN=n;eO=i;break;} line++; } } if(eN)break; last=n; }
       if(!sN) return null; if(!eN){ eN=last||sN; eO=eN.data.length; } return [sN,sO,eN,eO]; };
     let p=walk(); if(!p) return [];
